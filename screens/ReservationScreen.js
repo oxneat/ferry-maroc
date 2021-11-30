@@ -219,12 +219,25 @@ export default function ReservationScreen() {
                     Réservez votre voyage
                 </Text>
                 <View style={styles.rw} >
-                    <TouchableOpacity onPress={() => setSelectedBtn(0)} style={selectedBtn == 0 ? { ...styles.selectedBtn, marginRight: 30 } : {}} >
+                    <TouchableOpacity onPress={() => {
+                        if (selectedBtn != 0) {
+                            setSelectedDates([])
+                        }
+
+                        setSelectedBtn(0)
+                    }} style={selectedBtn == 0 ? { ...styles.selectedBtn, marginRight: 30 } : {}} >
                         <Text style={{ fontFamily: 'Gilroy-Bold', ...styles.white }} >
                             Aller et Retour
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setSelectedBtn(1)} style={selectedBtn == 1 ? { ...styles.selectedBtn, marginLeft: 30 } : {}}>
+                    <TouchableOpacity onPress={() => {
+                        let tmpSel = [...selectedDates]
+                        if (selectedDates.length == 2) {
+                            tmpSel = [selectedDates[0]]
+                        }
+                        setSelectedDates(tmpSel)
+                        setSelectedBtn(1)
+                    }} style={selectedBtn == 1 ? { ...styles.selectedBtn, marginLeft: 30 } : {}}>
                         <Text style={{ fontFamily: 'Gilroy-Bold', color: '#fff' }} >
                             Aller Simple
                         </Text>
@@ -263,7 +276,7 @@ export default function ReservationScreen() {
                         </View>
                     </View>}
                 </View>
-                <View style={{ ...styles.rw, marginTop: 40 }} >
+                <View style={{ ...styles.rw, marginTop: 10 }} >
                     <View style={{ flex: 1 }} >
                         <Text style={{ fontFamily: 'Gilroy-Bold', marginBottom: 5 }} >
                             Départ
@@ -529,11 +542,9 @@ export default function ReservationScreen() {
                 // console.log(destinations[selectedDest1[0]].data[selectedDest1[1]][0]);
                 // console.log(selectedDates)
 
-                if (selectedBtn == 0 && selectedDates.length == 2 || selectedBtn == 1 && selectedDates.length == 1) {
+                if (selectedBtn == 0 && selectedDates.length == 2 && selectedDest1[0] != -1 && selectedDest1[1] != -1 && selectedDest[0] != -1 && selectedDest[1] != -1 || selectedBtn == 1 && selectedDates.length == 1 && selectedDest[0] != -1 && selectedDest[1] != -1) {
                     setLoading(true);
-                    if (selectedDest1[0] != -1 && selectedDest1[1] != -1 && selectedDest[0] != -1 && selectedDest[1] != -1) {
-                        navigation.navigate('search', { dest1: destinations[selectedDest[0]].data[selectedDest[1]][0], dest2: destinations[selectedDest1[0]].data[selectedDest1[1]][0], selectedDates })
-                    }
+                    navigation.navigate('search', { dest1: destinations[selectedDest[0]].data[selectedDest[1]][0], dest2: destinations[selectedDest1[0]].data[selectedDest1[1]][0], selectedDates })
                     setTimeout(() => {
                         setLoading(false)
                     }, 100)
@@ -561,10 +572,11 @@ const styles = StyleSheet.create({
     fi_sc: {
         backgroundColor: '#414780',
         paddingHorizontal: 30,
-        paddingVertical: 40,
+        paddingTop: 40,
         borderBottomLeftRadius: 60,
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        paddingBottom: 20
     },
     white: {
         color: 'white'

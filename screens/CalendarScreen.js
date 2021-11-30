@@ -133,7 +133,7 @@ export default function CalendarScreen() {
                     ))
                 }
             </ScrollView>
-            <View style={styles.ok_wrpr}>
+            {/* <View style={styles.ok_wrpr}>
                 <View>
                     <Text style={{ fontSize: 15 }}>
                         {
@@ -141,7 +141,7 @@ export default function CalendarScreen() {
                         }
                     </Text>
                 </View>
-            </View>
+            </View> */}
         </View>
     )
 }

@@ -34,11 +34,11 @@ export default function WebViewScreen() {
 
     let navigation = useNavigation();
 
-    useEffect(() => {
-        console.log('--------------- Results --------------------------');
-        console.log(results);
-        console.log('--------------- Results --------------------------');
-    }, [results])
+    // useEffect(() => {
+    //     console.log('--------------- Results --------------------------');
+    //     console.log(results);
+    //     console.log('--------------- Results --------------------------');
+    // }, [results])
 
     useEffect(() => {
         setTimeout(() => {
@@ -49,7 +49,7 @@ export default function WebViewScreen() {
     return (
         <View style={styles.wrpr}>
             <TopBar title="Resultats" onBack={() => navigation.goBack()} />
-            {/* <View style={styles.wv}>
+            <View style={styles.wv}>
                 <WebView source={{ uri: 'https://www.maroc-ferry.com/', }} injectedJavaScript={`
                 function selectElement(id, valueToSelect) {    
                     let element = document.getElementById(id);
@@ -58,6 +58,7 @@ export default function WebViewScreen() {
                 let arro = []
 
                 let results = document.querySelectorAll('.panel-body.resultat');
+                let isError = document.querySelector('.alert.alert-warning[role="alert"]');
 
                 if(results.length >0){
                     if(document.querySelectorAll('a[role=button]').length>0){
@@ -122,32 +123,50 @@ export default function WebViewScreen() {
                         arro.push(obj)
                     })
 
-                    window.ReactNativeWebView.postMessage(JSON.stringify(arro));
+                    let tmpStuff = {
+                        type:'results',
+                        data:arro
+                    }
+
+                    window.ReactNativeWebView.postMessage(JSON.stringify(tmpStuff));
                 }
 
 
                 selectElement('allee', '${params.dest1}');
                 document.querySelector('#vehicules').value="1 Véhicule";
                 document.querySelector('#date_depart').value='${params.selectedDates[0]}';
-                if (${params.selectedDates.length == 0} == true) {
+
+                if (${params.selectedDates.length < 2} == true) {
                     document.querySelectorAll(".radio-inline").forEach((it)=>{
                         it.click()
                     })
-                }else{
-                    document.querySelector('#date_retour').value='${params.selectedDates[1]}';
-                    document.querySelector('#port_retour').innerHTML="<option value='${params.dest2}'></option>";
+                    document.querySelector('input[name=type_traversee]').value= 'ALLEE_SIMPLE';
                 }
+
+                if (isError != null) {
+
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type:'error',
+                        data:[]
+                    }))
+                }
+
+                document.querySelector('#date_retour').value='${params.selectedDates[1]}';
+                document.querySelector('#port_retour').innerHTML="<option value='${params.dest2}'></option>";
 
                 document.querySelector('.btn.btn-traverser.btnheight').click();
                 `} onMessage={(event) => {
                         let tmpData = JSON.parse(event.nativeEvent.data)
-                        if (tmpData.length > 0) {
-                            setResults(tmpData);
-                        }
+                        console.log("----------------TMP DATA-----------------------")
+                        console.log(tmpData)
+                        console.log("-------------------TMP DATA--------------------")
+                        // if (tmpData.length > 0) {
+                        //     setResults(tmpData);
+                        // }
                     }} />
-            </View> */}
-            <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: '#414780', bottom: 0 }}>
-                {/* <ScrollView style={styles.scr_wrp}>
+            </View>
+            {/* <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: '#414780', bottom: 0 }}>
+                <ScrollView style={styles.scr_wrp}>
                     {
                         results.map((item, index) => {
 
@@ -157,7 +176,7 @@ export default function WebViewScreen() {
                             )
                         })
                     }
-                </ScrollView> */}
+                </ScrollView>
                 {results.length > 0 && <View style={[styles.scr_wrp, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
                     <Text style={{ color: 'white', fontFamily: 'Gilroy-Medium' }}>
                         Aucun Voyage n'est trouvé
@@ -177,7 +196,7 @@ export default function WebViewScreen() {
                         <ActivityIndicator color='black' size={26} />
                     </View>
                 </View>}
-            </View>
+            </View> */}
         </View>
     )
 }
