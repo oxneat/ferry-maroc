@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Activ
 
 import { useNavigation } from '@react-navigation/native';
 
-import { AntDesign, Entypo, MaterialCommunityIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, Entypo, MaterialCommunityIcons, FontAwesome5, FontAwesome,Feather } from '@expo/vector-icons';
 
 import Calendar from '../components/Calendar';
 
@@ -550,9 +550,7 @@ export default function ReservationScreen() {
                     }, 100)
                 }
             }} style={styles.btn} >
-                {!loading ? <Text style={styles.txt_ntb} >
-                    Chercher
-                </Text> :
+                {!loading ? <Feather name="search" size={24} color="white" /> :
                     <ActivityIndicator size={17} color='white' />}
             </TouchableOpacity>
         </View>
@@ -584,13 +582,16 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: '#414780',
         position: 'absolute',
-        bottom: 0,
-        width: '100%',
+        bottom: 70,
+        width: 50,
+        height: 50,
+        borderRadius: 50 / 2,
         alignItems: 'center',
         justifyContent: 'center',
         paddingBottom: 20,
         paddingTop: 20,
-        zIndex: 5
+        zIndex: 5,
+        right: 10
     },
     txt_ntb: {
         fontFamily: 'Gilroy-Bold',

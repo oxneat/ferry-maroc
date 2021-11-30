@@ -34,17 +34,13 @@ export default function WebViewScreen() {
 
     let navigation = useNavigation();
 
+    let [isEmpty, setIsEmpty] = useState(0);
+
     // useEffect(() => {
     //     console.log('--------------- Results --------------------------');
     //     console.log(results);
     //     console.log('--------------- Results --------------------------');
     // }, [results])
-
-    useEffect(() => {
-        setTimeout(() => {
-            setResults([0])
-        }, getRandomIntInclusive(2000, 15000))
-    }, [])
 
     return (
         <View style={styles.wrpr}>
@@ -58,7 +54,6 @@ export default function WebViewScreen() {
                 let arro = []
 
                 let results = document.querySelectorAll('.panel-body.resultat');
-                let isError = document.querySelector('.alert.alert-warning[role="alert"]');
 
                 if(results.length >0){
                     if(document.querySelectorAll('a[role=button]').length>0){
@@ -129,6 +124,12 @@ export default function WebViewScreen() {
                     }
 
                     window.ReactNativeWebView.postMessage(JSON.stringify(tmpStuff));
+                }else if(document.querySelectorAll('.alert-link').length >0){
+                    
+                    window.ReactNativeWebView.postMessage(JSON.stringify({
+                        type:'error',
+                        data:[]
+                    }))
                 }
 
 
@@ -143,13 +144,13 @@ export default function WebViewScreen() {
                     document.querySelector('input[name=type_traversee]').value= 'ALLEE_SIMPLE';
                 }
 
-                if (isError != null) {
-
-                    window.ReactNativeWebView.postMessage(JSON.stringify({
-                        type:'error',
-                        data:[]
-                    }))
-                }
+                // if (document.querySelector('.alert-link') != null) {
+                //     JSON.stringify({
+                //         type:'error',
+                //         data:[]
+                //     })
+                //     window.ReactNativeWebView.postMessage("dsqdjksdfjk")
+                // }
 
                 document.querySelector('#date_retour').value='${params.selectedDates[1]}';
                 document.querySelector('#port_retour').innerHTML="<option value='${params.dest2}'></option>";
@@ -160,13 +161,16 @@ export default function WebViewScreen() {
                         console.log("----------------TMP DATA-----------------------")
                         console.log(tmpData)
                         console.log("-------------------TMP DATA--------------------")
-                        // if (tmpData.length > 0) {
-                        //     setResults(tmpData);
-                        // }
+                        if (tmpData.type != 'error') {
+                            setResults(tmpData.data);
+                            setIsEmpty(2)
+                        } else {
+                            setIsEmpty(1)
+                        }
                     }} />
             </View>
-            {/* <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: '#414780', bottom: 0 }}>
-                <ScrollView style={styles.scr_wrp}>
+            <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: '#414780', bottom: 0 }}>
+                {isEmpty == 2 && results.length > 0 && <ScrollView style={styles.scr_wrp}>
                     {
                         results.map((item, index) => {
 
@@ -176,8 +180,8 @@ export default function WebViewScreen() {
                             )
                         })
                     }
-                </ScrollView>
-                {results.length > 0 && <View style={[styles.scr_wrp, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
+                </ScrollView>}
+                {isEmpty == 1 && <View style={[styles.scr_wrp, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
                     <Text style={{ color: 'white', fontFamily: 'Gilroy-Medium' }}>
                         Aucun Voyage n'est trouvé
                     </Text>
@@ -191,12 +195,12 @@ export default function WebViewScreen() {
                         })
                     }
                 </BottomModal>}
-                {results.length == 0 && <View style={styles.ldr_wrpr}>
+                {isEmpty == 0 && <View style={styles.ldr_wrpr}>
                     <View style={styles.ldr_cntnt}>
                         <ActivityIndicator color='black' size={26} />
                     </View>
                 </View>}
-            </View> */}
+            </View>
         </View>
     )
 }

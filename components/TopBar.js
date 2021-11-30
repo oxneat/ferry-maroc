@@ -42,8 +42,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 15,
         paddingHorizontal: 10,
-        position:'relative',
-        zIndex:2000
+        // position:'relative',
+        // zIndex:2000,
+
     },
     txt: {
         fontFamily: 'Gilroy-Bold',

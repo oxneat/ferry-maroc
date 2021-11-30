@@ -7,12 +7,6 @@ import { useFonts } from 'expo-font';
 
 import AppLoading from 'expo-app-loading';
 
-import ReservationScreen from './screens/ReservationScreen';
-// import HeightSelectionScreen from './screens/HeightSelectionScreen';
-import WebViewScreen from './screens/WebViewScreen';
-
-import CalendarScreen from './screens/CalendarScreen';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { StatusBar } from 'expo-status-bar';
@@ -20,6 +14,8 @@ import { StatusBar } from 'expo-status-bar';
 import { Entypo, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
+
+import HomeScreen from './screens/HomeScreen';
 
 let Icon = ({ type, name }) => {
     if (type == 'fea') {
@@ -59,9 +55,7 @@ export default function Router() {
         <>
             <StatusBar backgroundColor='black' style='light' />
             <Stack.Navigator>
-                <Stack.Screen name="home" options={{ headerShown: false }} component={ReservationScreen} />
-                <Stack.Screen name="calendar" options={{ headerShown: false }} component={CalendarScreen} />
-                <Stack.Screen name="search" options={{ headerShown: false }} component={WebViewScreen} />
+                <Stack.Screen name="home" options={{ headerShown: false }} component={HomeScreen} />
             </Stack.Navigator>
 
             <View style={styles.container} >
@@ -112,7 +106,8 @@ const styles = StyleSheet.create({
         // shadowRadius: 3.84,
         // elevation: 5,
         borderTopColor: 'gray',
-        borderTopWidth: 0.5
+        borderTopWidth: 0.5,
+        zIndex: 1000
     },
     icn: {
         alignItems: 'center'

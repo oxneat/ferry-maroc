@@ -75,7 +75,7 @@ export default function CalendarScreen() {
                 navigation.goBack()
             }} >
                 <TouchableOpacity onPress={() => {
-                    navigation.navigate('home', { selectedDates })
+                    navigation.navigate('book', { selectedDates })
                 }}>
                     <AntDesign name="check" size={24} color="black" />
                 </TouchableOpacity>
