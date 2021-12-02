@@ -25,6 +25,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import TopBar from "../components/TopBar";
 
+import { mainEndPoint } from '../api/EndPoint';
+
 export default function WebViewScreen() {
     const [results, setResults] = useState([]);
 
@@ -36,140 +38,224 @@ export default function WebViewScreen() {
 
     let [isEmpty, setIsEmpty] = useState(0);
 
+    const [endPoint, setEndPoint] = useState('/');
+
+    const [selectedOptionsRoom, setSelectedOptionsRoom] = useState([]);
+
+    const [selectedOptionsMeal, setSelectedOptionsMeal] = useState([]);
+
     // useEffect(() => {
     //     console.log('--------------- Results --------------------------');
     //     console.log(results);
     //     console.log('--------------- Results --------------------------');
     // }, [results])
 
+    const [showWebView, setShowWebView] = useState(true);
+
     return (
         <View style={styles.wrpr}>
             <TopBar title="Resultats" onBack={() => navigation.goBack()} />
             <View style={styles.wv}>
-                <WebView source={{ uri: 'https://www.maroc-ferry.com/', }} injectedJavaScript={`
+                {showWebView && <WebView source={{ uri: mainEndPoint + endPoint }} injectedJavaScript={`
                 function selectElement(id, valueToSelect) {    
                     let element = document.getElementById(id);
                     element.value = valueToSelect;
                 }
-                let arro = []
 
-                let results = document.querySelectorAll('.panel-body.resultat');
+                if(${endPoint == '/'} == true || ${endPoint == '/resultats'} == true ){
+                    let arro = []
 
-                if(results.length >0){
-                    if(document.querySelectorAll('a[role=button]').length>0){
-                        document.querySelectorAll('a[role=button]').forEach((it)=>{
-                            if(it.className.includes('btn-choisir')){
-                                it.click()
+                    let results = document.querySelectorAll('.panel-body.resultat');
+
+                    if(results.length >0){
+                        if(document.querySelectorAll('a[role=button]').length>0){
+                            document.querySelectorAll('a[role=button]').forEach((it)=>{
+                                if(it.className.includes('btn-choisir')){
+                                    it.click()
+                                }
+                            })
+                        }
+                        results.forEach((item)=>{
+                            let obj = {}
+                            for(let i=0;i<4;i++){
+                                let itms = item.children[i]
+            
+                                if (i == 1) {
+                                    obj.img = itms.children[0].src
+                                }else if(i == 0){
+                                    obj.date = itms.children[1].innerText
+                                }else if(i == 2){
+                                    Array.from(itms.children[1].children).forEach((it,ind)=>{
+                                        if(ind > 0){
+                                            obj[it.className]= it.value;
+                                        }
+                                    })
+            
+                                    let other =itms.children[2].innerText.split(' ').filter(it=>it.length>1)
+                                    obj.other = other
+                                }
                             }
-                        })
-                    }
-                    results.forEach((item)=>{
-                        let obj = {}
-                        for(let i=0;i<4;i++){
-                            let itms = item.children[i]
-        
-                            if (i == 1) {
-                                obj.img = itms.children[0].src
-                            }else if(i == 0){
-                                obj.date = itms.children[1].innerText
-                            }else if(i == 2){
-                                Array.from(itms.children[1].children).forEach((it,ind)=>{
-                                    if(ind > 0){
-                                        obj[it.className]= it.value;
-                                    }
+
+
+                            
+                            let tmpLst = item.nextElementSibling.children[0].querySelector('table>tbody').querySelectorAll('tr')
+                            let tmpKeys = Array.from(item.nextElementSibling.children[0].querySelector('table>thead>tr').children).map((itemo) => itemo.innerText)
+                            let tp_det = []
+                            Array.from(tmpLst).forEach(trIt => {
+                                if(!trIt.className.includes('hidden')){
+                                    let tmpDetail = {}
+                                    Array.from(trIt.children).forEach((tdIt, index) => {
+                                        if (index == 0) {
+                                            tmpDetail.title = tdIt.innerText
+                                        }
+                                        if (tdIt.className.includes('r-cache')) {
+                                            tmpDetail[tmpKeys[index]] = tdIt.children.length
+                                        }
+                    
+                                        if (trIt.children.length - 2 == index) {
+                                            tmpDetail.price = tdIt.querySelector('h5').innerText
+                                            if(!trIt.className.includes('hidden')){
+                                                let tmp = trIt.querySelector('select')
+                                                tmpDetail.max=tmp.children[tmp.children.length-1].innerText
+                                            }
+                                            tp_det.push(tmpDetail);
+                                        }
+                                    })
+                                }
+                            })
+                            
+                            let timeData = []
+                            item.children[2].querySelectorAll('h5').forEach((it)=>{
+                                timeData.push(it.innerText)
+                            })
+
+                            obj.time_data = timeData;
+
+                            obj.destinations = item.parentElement.previousElementSibling.previousElementSibling.querySelector('a').innerText
+                            obj.details = tp_det
+                            let tmpFdSelection = []
+                            item.nextElementSibling.children[0].querySelectorAll('.panel-body.collapse.in').forEach((it)=>{
+                                it.querySelectorAll('.col-md-8').forEach((itm)=>{
+                                    tmpFdSelection.push(itm.innerText)
                                 })
-        
-                                let other =itms.children[2].innerText.split(' ').filter(it=>it.length>1)
-                                obj.other = other
-                            }
+                            })
+
+                            obj.food = tmpFdSelection
+                            arro.push(obj)
+                        })
+
+                        let tmpStuff = {
+                            type:'results',
+                            data:arro
                         }
 
-
+                        window.ReactNativeWebView.postMessage(JSON.stringify(tmpStuff));
+                    }else if(document.querySelectorAll('.alert-link').length >0){
                         
-                        let tmpLst = item.nextElementSibling.children[0].querySelector('table>tbody').querySelectorAll('tr')
-                        let tmpKeys = Array.from(item.nextElementSibling.children[0].querySelector('table>thead>tr').children).map((itemo) => itemo.innerText)
-                        let tp_det = []
-                        Array.from(tmpLst).forEach(trIt => {
-                            let tmpDetail = {}
-                            Array.from(trIt.children).forEach((tdIt, index) => {
-                                if (index == 0) {
-                                    tmpDetail.title = tdIt.innerText
-                                }
-                                if (tdIt.className.includes('r-cache')) {
-                                    tmpDetail[tmpKeys[index]] = tdIt.children.length
-                                }
-            
-                                if (trIt.children.length - 2 == index) {
-                                    tmpDetail.price = tdIt.querySelector('h5').innerText
-                                    tp_det.push(tmpDetail);
+                        window.ReactNativeWebView.postMessage(JSON.stringify({
+                            type:'error',
+                            data:[]
+                        }))
+                    }
+
+
+                    selectElement('allee', '${params.dest1}');
+                    document.querySelector('#vehicules').value="1 Véhicule";
+                    document.querySelector('#date_depart').value='${params.selectedDates[0]}';
+
+                    if (${params.selectedDates.length < 2} == true) {
+                        document.querySelectorAll(".radio-inline").forEach((it)=>{
+                            it.click()
+                        })
+                        document.querySelector('input[name=type_traversee]').value= 'ALLEE_SIMPLE';
+                    }
+
+                    // if (document.querySelector('.alert-link') != null) {
+                    //     JSON.stringify({
+                    //         type:'error',
+                    //         data:[]
+                    //     })
+                    //     window.ReactNativeWebView.postMessage("dsqdjksdfjk")
+                    // }
+
+                    document.querySelector('#date_retour').value='${params.selectedDates[1]}';
+                    document.querySelector('#port_retour').innerHTML="<option value='${params.dest2}'></option>";
+
+                    document.querySelector('.btn.btn-traverser.btnheight').click();
+
+                    if(${endPoint == '/resultats'} == true){
+                        // window.ReactNativeWebView.postMessage(JSON.stringify({
+                        //     type:'fuck',
+                        //     data:[]
+                        // }))
+
+                        results.forEach((item)=>{
+                            let tmpLst = item.nextElementSibling.children[0].querySelector('table>tbody').querySelectorAll('tr')
+                            //let tmp = item.querySelector('select')
+                            let tmpLst1 = item.nextElementSibling.children[0].querySelector('.panel-body.collapse.in').querySelectorAll('input')[0].value = 5
+                            let tmpLst2 =item.nextElementSibling.children[0].querySelectorAll('a.btn[data-toggle="collapse"]');
+                            
+                            tmpLst2=Array.from(tmpLst2).filter((it)=>it.className.includes('choisir'))
+                            console.log(tmpLst2)
+                        
+                            tmpLst.forEach((it)=>{
+                                if(!it.className.includes('hidden')){
+                                    let tmp = it.querySelector('select')
+                                    tmp.value = 1
                                 }
                             })
                         })
-                        
-                        let timeData = []
-                        item.children[2].querySelectorAll('h5').forEach((it)=>{
-                            timeData.push(it.innerText)
-                        })
-
-                        obj.time_data = timeData;
-
-                        obj.destinations = item.parentElement.previousElementSibling.previousElementSibling.querySelector('a').innerText
-                        obj.details = tp_det
-                        arro.push(obj)
-                    })
-
-                    let tmpStuff = {
-                        type:'results',
-                        data:arro
                     }
-
-                    window.ReactNativeWebView.postMessage(JSON.stringify(tmpStuff));
-                }else if(document.querySelectorAll('.alert-link').length >0){
-                    
-                    window.ReactNativeWebView.postMessage(JSON.stringify({
-                        type:'error',
-                        data:[]
-                    }))
                 }
-
-
-                selectElement('allee', '${params.dest1}');
-                document.querySelector('#vehicules').value="1 Véhicule";
-                document.querySelector('#date_depart').value='${params.selectedDates[0]}';
-
-                if (${params.selectedDates.length < 2} == true) {
-                    document.querySelectorAll(".radio-inline").forEach((it)=>{
-                        it.click()
-                    })
-                    document.querySelector('input[name=type_traversee]').value= 'ALLEE_SIMPLE';
-                }
-
-                // if (document.querySelector('.alert-link') != null) {
-                //     JSON.stringify({
-                //         type:'error',
-                //         data:[]
-                //     })
-                //     window.ReactNativeWebView.postMessage("dsqdjksdfjk")
-                // }
-
-                document.querySelector('#date_retour').value='${params.selectedDates[1]}';
-                document.querySelector('#port_retour').innerHTML="<option value='${params.dest2}'></option>";
-
-                document.querySelector('.btn.btn-traverser.btnheight').click();
                 `} onMessage={(event) => {
                         let tmpData = JSON.parse(event.nativeEvent.data)
-                        console.log("----------------TMP DATA-----------------------")
-                        console.log(tmpData)
-                        console.log("-------------------TMP DATA--------------------")
+
+                        // console.log("----------------TMP DATA-----------------------")
+                        // console.log(tmpData)
+                        // console.log("-------------------TMP DATA--------------------")
+                        // setTimeout(() => {
+                        //     setEndPoint('/resultats')
+                        //     setShowWebView(false)
+                        //     setTimeout(() => {
+                        //         setShowWebView(true)
+                        //     }, 1000);
+                        //     console.log('-----------------Timed Out-------------------')
+                        // }, 8000)
+
+                        let tmpCounts = []
+                        let tmpCounts_o = []
+
+                        if (tmpData && tmpData.type && tmpData.type == 'results' && tmpData.data && tmpData.data.length > 0) {
+                            tmpData.data.forEach((item) => {
+                                let localCount = []
+                                let localCount_o = []
+
+                                console.log(item.food.length)
+                                for (let i = 0; i < item.details.length; i++) {
+                                    localCount.push(0)
+                                }
+
+                                for (let i = 0; i < item.food.length; i++) {
+                                    localCount_o.push(0)
+                                }
+
+                                tmpCounts_o.push(localCount_o);
+                                tmpCounts.push(localCount);
+                            })
+
+                            setSelectedOptionsMeal(tmpCounts_o)
+                            setSelectedOptionsRoom(tmpCounts)
+                        }
+
                         if (tmpData.type != 'error') {
                             setResults(tmpData.data);
                             setIsEmpty(2)
                         } else {
                             setIsEmpty(1)
                         }
-                    }} />
+                    }} />}
             </View>
-            <View style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: '#414780', bottom: 0 }}>
+            <View style={{ backgroundColor: '#414780', height: '100%' }}>
                 {isEmpty == 2 && results.length > 0 && <ScrollView style={styles.scr_wrp}>
                     {
                         results.map((item, index) => {
@@ -187,11 +273,22 @@ export default function WebViewScreen() {
                     </Text>
                 </View>}
 
-                {results.length > 0 && selectedResult > -1 && <BottomModal onPress={() => setSelectedResult(-1)}>
+                {results.length > 0 && selectedOptionsRoom.length > 0 && selectedResult > -1 && <BottomModal onPress={() => setSelectedResult(-1)}>
                     {
                         results[selectedResult].details.map((item, index) => {
 
-                            return <CardItem price={item.price} title={item.title} key={index + ' qsdqs 55'} />
+                            return <CardItem onChange={(value) => {
+                                // console.log(selectedOptionsRoom)
+                                if (value <= parseInt(item.max) && value >= 0) {
+                                    let tmpSel = [...selectedOptionsRoom]
+                                    tmpSel[selectedResult][index] = value
+                                    setSelectedOptionsRoom(tmpSel)
+                                }
+
+                                console.log('------------------------------------------------')
+                                console.log(item)
+                                console.log('------------------------------------------------')
+                            }} value={selectedOptionsRoom[selectedResult][index]} price={item.price} capacity={item.Lits} swr={parseInt(item["Douche"]) > 0} win={parseInt(item["Fenêtre"]) > 0} wc={parseInt(item["Sanitaire"]) > 0} title={item.title} key={index + ' qsdqs 55'} />
                         })
                     }
                 </BottomModal>}

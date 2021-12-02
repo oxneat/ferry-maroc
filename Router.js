@@ -1,7 +1,5 @@
 // import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect } from 'react';
 
 import { useFonts } from 'expo-font';
 
@@ -11,23 +9,20 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { StatusBar } from 'expo-status-bar';
 
-import { Entypo, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-import { useNavigation } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import BottomTabBar from './components/BottomTabBar';
 
 import HomeScreen from './screens/HomeScreen';
 
-let Icon = ({ type, name }) => {
-    if (type == 'fea') {
-        return <Feather name={name} size={24} color="black" />
-    } else if (type == 'ent') {
-        return <Entypo name={name} size={24} color="black" />
-    } else {
-        return <MaterialCommunityIcons name={name} size={24} color="black" />
-    }
-}
+import { TabStateContext } from './context/TabManager';
 
 export default function Router() {
+    let { showBottomTab } = useContext(TabStateContext);
+
+    let route = useRoute();
 
     let [loaded, error] = useFonts({
         "Gilroy-Regular": require('./assets/fonts/Gilroy-Regular.ttf'),
@@ -48,6 +43,12 @@ export default function Router() {
 
     let arr = [["Réserver", "sail-boat", "", 'home'], ["Nos Traversées", "routes", "", 'home'], ["Nos Agences", "shop", 'ent', 'home'], ["Aide", "help", "ent", 'home'], ["Contact", "phone", "fea", 'home']]
 
+    // useEffect(() => {
+    // console.log('-------------------------')
+    // console.log(route.name)
+    // console.log('-------------------------')
+    // }, [route.name])
+
     return (
         // <ReservationScreen />
         // <HeightSelectionScreen />
@@ -57,63 +58,8 @@ export default function Router() {
             <Stack.Navigator>
                 <Stack.Screen name="home" options={{ headerShown: false }} component={HomeScreen} />
             </Stack.Navigator>
-
-            <View style={styles.container} >
-                {
-                    arr.map((item, index) => {
-                        let type = item[2];
-
-                        return (
-                            <TouchableOpacity onPress={() => {
-                                navigation.navigate(item[3]);
-                            }} style={styles.icn} key={index + ' icn main'}>
-                                <Icon name={item[1]} type={type} />
-                                <Text style={styles.txt}>
-                                    {
-                                        item[0]
-                                    }
-                                </Text>
-                            </TouchableOpacity>
-                        )
-                    })
-                }
-            </View>
+            {showBottomTab && <BottomTabBar arr={arr} />}
         </>
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        // flex: 1,
-        // backgroundColor: '#fff',
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        flexDirection: 'row',
-        width: '100%',
-        height: 60,
-        backgroundColor: 'white',
-        position: 'absolute',
-        bottom: 0,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-        // shadowColor: "#000",
-        // shadowOffset: {
-        //   width: 0,
-        //   height: 2,
-        // },
-        // shadowOpacity: 0.25,
-        // shadowRadius: 3.84,
-        // elevation: 5,
-        borderTopColor: 'gray',
-        borderTopWidth: 0.5,
-        zIndex: 1000
-    },
-    icn: {
-        alignItems: 'center'
-    },
-    txt: {
-        fontFamily: 'Gilroy-Medium',
-        fontSize: 10
-    }
-});

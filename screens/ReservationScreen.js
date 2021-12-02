@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, ActivityIndicator } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
-import { AntDesign, Entypo, MaterialCommunityIcons, FontAwesome5, FontAwesome,Feather } from '@expo/vector-icons';
+import { AntDesign, Entypo, MaterialCommunityIcons, FontAwesome5, FontAwesome, Feather } from '@expo/vector-icons';
 
 import Calendar from '../components/Calendar';
 
@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import { useRoute } from "@react-navigation/native";
 
 import SelectionControls from '../components/SelectionControls';
+import { TabStateContext } from '../context/TabManager';
 
 let imgs = ['https://www.ferrymaroc.com/easybook/images/bg/gnv.webp', 'https://www.ferrymaroc.com/easybook/images/bg/13.webp', 'https://www.ferrymaroc.com/easybook/images/bg/4.jpg']
 
@@ -81,6 +82,10 @@ export default function ReservationScreen() {
 
     const [selectedVehi, setSelectedVehi] = useState([]);
 
+    const isFocused = useIsFocused();
+
+    let {showBottomTab, setShowBottomTab} = useContext(TabStateContext)
+
     // const [selectedVehicles, setSelectedVehicles] = useState([])
 
     // const [dateType, setDateType] = useState(0);
@@ -115,9 +120,6 @@ export default function ReservationScreen() {
     // }, [page])
 
     useEffect(() => {
-        console.log('------------------------PARAMS------------------------')
-        console.log(params)
-        console.log('------------------------PARAMS------------------------')
         if (params && params.selectedDates) {
             setSelectedDates(params.selectedDates)
         }
@@ -125,9 +127,6 @@ export default function ReservationScreen() {
     }, [params])
 
     useEffect(() => {
-        console.log('---------------------Vehicles---------------------------')
-        console.log(vehicles)
-        console.log('---------------------Vehicles---------------------------')
 
         let itemos = {}
 
@@ -185,19 +184,12 @@ export default function ReservationScreen() {
 
 
     useEffect(() => {
-        console.log("----------------------------------------------------------------------")
-        if (selectedDest[0] != -1 && selectedDest[1] != -1) {
-            console.log(destinations[selectedDest[0]].data[selectedDest[1]][0])
-            // [selectedDest[1]][0][1])
+        if (isFocused && !showBottomTab) {
+            setShowBottomTab(true)
+        }else if (!isFocused) {
+            setShowBottomTab(false)
         }
-
-        if (selectedDest1[0] != -1 && selectedDest1[1] != -1) {
-            console.log(destinations[selectedDest1[0]].data[selectedDest1[1]][0])
-            // [selectedDest1[1]][1])
-        }
-        console.log("----------------------------------------------------------------------")
-
-    }, [selectedDest, selectedDest1])
+    }, [isFocused])
 
     let [selectedBtn, setSelectedBtn] = useState(0)
 

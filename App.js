@@ -1,5 +1,6 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from 'react';
+
+import { TabStateProvider } from './context/TabManager';
 
 import { NavigationContainer } from '@react-navigation/native';
 
@@ -11,10 +12,12 @@ import RouterScreen from './Router';
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="hm" options={{ headerShown: false }} component={RouterScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <TabStateProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="hm" options={{ headerShown: false }} component={RouterScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </TabStateProvider>
   )
 }

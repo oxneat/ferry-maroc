@@ -3,7 +3,9 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import { AntDesign, Entypo } from '@expo/vector-icons';
 
-export default function CardItem({ title, price }) {
+import SelectionControls from '../components/SelectionControls';
+
+export default function CardItem({ title, price, onChange, value, swr, wc, win, capacity }) {
     return (
         <View style={styles.wrapper}>
             <View style={styles.row}>
@@ -13,7 +15,7 @@ export default function CardItem({ title, price }) {
                     </Text>
                 </View>
 
-                <View style={[styles.row, { alignItems: 'center' }, styles.cntrls_wrpr]}>
+                {/* <View style={[styles.row, { alignItems: 'center' }, styles.cntrls_wrpr]}>
                     <View style={styles.sng_wr}>
                         <AntDesign name="minus" size={13} color="black" />
                     </View>
@@ -23,7 +25,8 @@ export default function CardItem({ title, price }) {
                     <View style={styles.sng_wr}>
                         <AntDesign name="plus" size={13} color="black" />
                     </View>
-                </View>
+                </View> */}
+                <SelectionControls onChange={onChange} value={value} />
             </View>
             <View style={[styles.row, { marginTop: 10, borderBottomWidth: 1, borderBottomColor: 'gray', paddingBottom: 10 }]}>
                 <View style={styles.flx}>
@@ -44,19 +47,19 @@ export default function CardItem({ title, price }) {
             </View>
             <View style={[styles.row, { marginTop: 10 }]}>
                 <View style={styles.flx}>
-                    <Text style={styles.font_reg}>0</Text>
+                    <Text style={styles.font_reg}>{capacity}</Text>
                 </View>
                 <View style={[styles.flx, styles.m_1]}>
                     <Text style={styles.font_reg}>Cabine</Text>
                 </View>
                 <View style={styles.flx}>
-                    <Entypo name="cross" size={15} color="red" />
+                    {win ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
                 </View>
                 <View style={styles.flx}>
-                    <Entypo name="check" size={15} color="green" />
+                    {swr ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
                 </View>
                 <View style={styles.flx}>
-                    <Entypo name="cross" size={15} color="red" />
+                    {wc ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
                 </View>
             </View>
             <View style={[styles.row, { marginTop: 10 }]}>
