@@ -28,22 +28,23 @@ export default function TopBar({ onBack, children, title = 'Calendrier' }) {
 const styles = StyleSheet.create({
     wrpr: {
         backgroundColor: 'white',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.27,
-        shadowRadius: 4.65,
+        // shadowColor: "#000",
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 3,
+        // },
+        // shadowOpacity: 0.27,
+        // shadowRadius: 4.65,
 
-        elevation: 6,
+        // elevation: 6,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 15,
         paddingHorizontal: 10,
-        // position:'relative',
-        // zIndex:2000,
+        position: 'relative',
+        zIndex: 2000,
+        height:60
 
     },
     txt: {

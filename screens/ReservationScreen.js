@@ -186,8 +186,6 @@ export default function ReservationScreen() {
     useEffect(() => {
         if (isFocused && !showBottomTab) {
             setShowBottomTab(true)
-        }else if (!isFocused) {
-            setShowBottomTab(false)
         }
     }, [isFocused])
 

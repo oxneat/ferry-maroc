@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 
 import { NavigationContext } from '@react-navigation/native';
 
@@ -6,13 +6,18 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { Entypo, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
-let Icon = ({ type, name }) => {
+import { useNavigation } from '@react-navigation/native';
+import { TabStateContext } from '../context/TabManager';
+
+import Colors from '../helpers/Colors'
+
+let Icon = ({ type, name, color }) => {
     if (type == 'fea') {
-        return <Feather name={name} size={24} color="black" />
+        return <Feather name={name} size={24} color={color} />
     } else if (type == 'ent') {
-        return <Entypo name={name} size={24} color="black" />
+        return <Entypo name={name} size={24} color={color} />
     } else {
-        return <MaterialCommunityIcons name={name} size={24} color="black" />
+        return <MaterialCommunityIcons name={name} size={24} color={color} />
     }
 }
 
@@ -24,6 +29,9 @@ export default function BottomTabBar({ arr }) {
     //     console.log(NavigationContext.displayName)
     //     console.log('-----------Route Name--------------------')
     // }, [NavigationContext])
+    let navigation = useNavigation();
+
+    const { currentRoute, setCurrentRoute } = useContext(TabStateContext);
 
     return (
         <View style={styles.container} >
@@ -33,10 +41,12 @@ export default function BottomTabBar({ arr }) {
 
                     return (
                         <TouchableOpacity onPress={() => {
+                            // console.log(item[3]);
+                            setCurrentRoute(item[3]);
                             navigation.navigate(item[3]);
                         }} style={styles.icn} key={index + ' icn main'}>
-                            <Icon name={item[1]} type={type} />
-                            <Text style={styles.txt}>
+                            <Icon color={item[3] == currentRoute ? Colors.main : 'black'} name={item[1]} type={type} />
+                            <Text style={[styles.txt, item[3] == currentRoute ? styles.selectedTxt : { color: 'black' }]}>
                                 {
                                     item[0]
                                 }
@@ -82,5 +92,9 @@ const styles = StyleSheet.create({
     txt: {
         fontFamily: 'Gilroy-Medium',
         fontSize: 10
+    },
+    selectedTxt: {
+        fontFamily: 'Gilroy-Bold',
+        color: Colors.main
     }
 })

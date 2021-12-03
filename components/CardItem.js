@@ -5,7 +5,7 @@ import { AntDesign, Entypo } from '@expo/vector-icons';
 
 import SelectionControls from '../components/SelectionControls';
 
-export default function CardItem({ title, price, onChange, value, swr, wc, win, capacity }) {
+export default function CardItem({ title, price, onChange, value, swr, wc, win, capacity, bed }) {
     return (
         <View style={styles.wrapper}>
             <View style={styles.row}>
@@ -50,7 +50,7 @@ export default function CardItem({ title, price, onChange, value, swr, wc, win, 
                     <Text style={styles.font_reg}>{capacity}</Text>
                 </View>
                 <View style={[styles.flx, styles.m_1]}>
-                    <Text style={styles.font_reg}>Cabine</Text>
+                    <Text style={styles.font_reg}>{bed}</Text>
                 </View>
                 <View style={styles.flx}>
                     {win ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}

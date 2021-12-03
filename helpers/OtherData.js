@@ -1,0 +1,1 @@
+export const routes = ['routes-ferry-Maroc', 'page/nos-agences', 'page/Besoin-daide', 'contactF']

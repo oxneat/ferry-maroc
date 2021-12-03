@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 
 import Constants from 'expo-constants';
@@ -11,11 +11,12 @@ import Colors from '../helpers/Colors';
 
 import { CompareDates, isBetween } from '../helpers/Dates';
 
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useIsFocused } from '@react-navigation/native';
 
 import TopBar from '../components/TopBar';
 
 import { AntDesign } from "@expo/vector-icons";
+import { TabStateContext } from '../context/TabManager';
 
 let getDays = (max) => {
     let days = []
@@ -40,6 +41,7 @@ let getMonthsNeeded = () => {
 }
 
 export default function CalendarScreen() {
+    const { setShowBottomTab } = useContext(TabStateContext);
 
     const [selectedDates, setSelectedDates] = useState([]);
 
@@ -68,6 +70,12 @@ export default function CalendarScreen() {
             setDates(realDates)
         }
     }, []);
+
+    let isFocused = useIsFocused();
+
+    useEffect(() => {
+        setShowBottomTab(false);
+    }, [isFocused])
 
     return (
         <View style={styles.wrpr}>

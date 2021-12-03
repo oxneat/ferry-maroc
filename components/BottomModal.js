@@ -7,10 +7,10 @@ import Constants from 'expo-constants';
 
 let { height } = Dimensions.get('window');
 
-export default function BottomModal({ onPress, children, secBtn, onPresso }) {
+export default function BottomModal({ onPress, children, secBtn, onPresso, bottom = 60 }) {
     return (
-        <View style={{ backgroundColor: 'rgba(0,0,0,0.5)', height: '100%', width: '100%', position: 'absolute', zIndex: 6, bottom: 60 }} >
-            <View style={{ position: 'absolute', width: '100%', backgroundColor: 'white', bottom: 0, paddingTop: 10,paddingHorizontal: 20 }}>
+        <View style={{ backgroundColor: 'rgba(0,0,0,0.5)', height: '100%', width: '100%', position: 'absolute', zIndex: 6, bottom: bottom }} >
+            <View style={{ position: 'absolute', width: '100%', backgroundColor: 'white', bottom: 0, paddingTop: 10, paddingHorizontal: 20 }}>
                 <View style={{ maxHeight: (height - Constants.statusBarHeight) * 0.8, backgroundColor: 'white', width: '100%', }}>
                     <ScrollView showsVerticalScrollIndicator={false} >
                         {
