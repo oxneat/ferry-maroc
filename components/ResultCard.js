@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
-export default function ResultCard({ from, fullDate, onMore, to, uri, departureHour, arrivalHour, duration, code }) {
+export default function ResultCard({ from, fullDate, onMore, to, uri, departureHour, arrivalHour, duration, code,total }) {
     return (
         <View style={styles.card}>
             <View style={styles.rw}>
@@ -66,6 +66,13 @@ export default function ResultCard({ from, fullDate, onMore, to, uri, departureH
                 </Text>
                 <View style={[styles.line,{marginHorizontal:5}]}></View>
                 <Text style={[styles.txt_cd_sec,{color:'black'}]}>Date Départ</Text>
+            </View>
+            <View style={[styles.rw, { marginTop: 10 }]}>
+                <Text style={[styles.txt_cd_pr, { fontSize: 15,color:'blue',fontFamily:'Gilroy-Heavy' }]}>
+                    {total.toFixed(2)+' Eur'}
+                </Text>
+                <View style={[styles.line,{marginHorizontal:5}]}></View>
+                <Text style={[styles.txt_cd_sec,{color:'black'}]}>Total</Text>
             </View>
             <View style={[styles.rw, { marginTop: 10 }]}>
                 <Text style={styles.txt_cd_pr}>

@@ -27,15 +27,17 @@ let getDays = (max) => {
     return days;
 }
 
+let months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',]
+
 let getMonthsNeeded = () => {
     let tmpArr = []
     for (let i = 0; i < 5; i++) {
         let currentDate = dayjs().add(i, 'month');
-        let month = currentDate.format('MMMM');
+        let month = currentDate.format('MM');
         let year = currentDate.format('YYYY')
 
         let numDays = currentDate.daysInMonth()
-        tmpArr.push({ title: `${month} ${year}`, length: numDays, month: currentDate.format('MM'), year })
+        tmpArr.push({ title: `${months[parseInt(month) - 1]} ${year}`, length: numDays, month: currentDate.format('MM'), year })
     }
     return tmpArr
 }
@@ -93,7 +95,7 @@ export default function CalendarScreen() {
                     getMonthsNeeded().map((itemParent, indexParent) => (
                         <View key={indexParent + ' in par cal'}>
                             <View style={styles.title_mth}>
-                                <Text style={styles.txt_reg}>{itemParent.title}</Text>
+                                <Text style={[styles.txt_reg, { textTransform: 'capitalize' }]}>{itemParent.title}</Text>
                             </View>
                             <View style={styles.rw_wrp}>
                                 {
@@ -164,8 +166,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     sin_it: {
-        width: width / 7,
-        height: width / 7,
+        width: width / 6,
+        height: width / 6,
         alignItems: 'center',
         justifyContent: 'center',
     },

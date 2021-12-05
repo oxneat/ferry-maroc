@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
-import { Feather,AntDesign } from '@expo/vector-icons';
+import { Feather, AntDesign } from '@expo/vector-icons';
 
 export default function SelectionControls({ onChange, value }) {
 
@@ -24,18 +24,18 @@ export default function SelectionControls({ onChange, value }) {
             </TouchableOpacity> */}
 
             <View style={[styles.row, { alignItems: 'center' }, styles.cntrls_wrpr]}>
-                <TouchableOpacity onPress={()=>{
-                    onChange(value - 1)
+                <TouchableOpacity onPress={() => {
+                    onChange(value - 1, 'minus')
                 }} style={styles.sng_wr}>
-                    <AntDesign name="minus" size={13} color="black" />
+                    <AntDesign name="minus" size={15} color="black" />
                 </TouchableOpacity>
-                <Text style={[styles.font_bld, { marginHorizontal: 8, fontSize: 13 }]}>
+                <Text style={[styles.font_bld, { marginHorizontal: 8, fontSize: 15 }]}>
                     {value}
                 </Text>
-                <TouchableOpacity onPress={()=>{
-                    onChange(value + 1)
+                <TouchableOpacity onPress={() => {
+                    onChange(value + 1, 'plus')
                 }} style={styles.sng_wr}>
-                    <AntDesign name="plus" size={13} color="black" />
+                    <AntDesign name="plus" size={15} color="black" />
                 </TouchableOpacity>
             </View>
 
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 3,
+        padding: 5,
         borderRadius: 5
     },
 })

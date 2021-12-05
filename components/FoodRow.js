@@ -1,15 +1,17 @@
 import React from 'react';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Platform } from 'react-native';
 
 import SelectionControls from './SelectionControls';
+
+import Colors from '../helpers/Colors';
 
 export default function FoodRow({ title, value, onChange }) {
     return (
         <View style={[styles.rw, styles.wrapper]}>
-            <Text style={{ fontFamily: 'Gilroy-Bold' }}>
+            <Text style={{ fontFamily: 'Gilroy-Bold', flex: 1, color: Colors.main }}>
                 {
-                    title
+                    Platform.OS == 'ios' ? title.replace(/<[^>]*>?/gm, '').replaceAll('\n', '').replaceAll('   ', '') : title
                 }
             </Text>
             <SelectionControls value={value} onChange={onChange} />

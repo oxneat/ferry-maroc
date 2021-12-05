@@ -17,12 +17,20 @@ import { getTravRet } from '../api/ReservationRequests';
 
 import BottomModal from '../components/BottomModal';
 
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 import { useRoute } from "@react-navigation/native";
 
 import SelectionControls from '../components/SelectionControls';
 import { TabStateContext } from '../context/TabManager';
+
+import Colors from '../helpers/Colors';
+
+import Constants from 'expo-constants';
+
+import { AlertContext } from '../context/AlertManager';
+
+import { isBig } from '../helpers/Dimension';
 
 let imgs = ['https://www.ferrymaroc.com/easybook/images/bg/gnv.webp', 'https://www.ferrymaroc.com/easybook/images/bg/13.webp', 'https://www.ferrymaroc.com/easybook/images/bg/4.jpg']
 
@@ -48,7 +56,7 @@ function arrayCompare(_arr1, _arr2) {
     return true;
 }
 
-let arr = [['Voiture', 'car-alt'], ['Remorque', 'caravan'], ['Fourgon', 'shuttle-van'], ['Motocyclette', 'motorcycle']];
+let arr = [['Voiture', 'car-alt', 'Véhicules', 'Véhicule', 'nb_voitures'], ['Remorque', 'caravan', 'remorques', 'remorque', 'nb_remorques'], ['Fourgon', 'shuttle-van', 'fourgons', 'fourgon', 'nb_fourgons'], ['Motocyclette', 'motorcycle', 'Motocyclette', 'moto', 'nb_motos']];
 // car-alt motorcycle shuttle - van caravan
 
 export default function ReservationScreen() {
@@ -78,13 +86,15 @@ export default function ReservationScreen() {
 
     const [loading, setLoading] = useState(false);
 
-    const [selectedPeople, setSelectedPeople] = useState([0, 0, 0, 0, 0]);
+    const [selectedPeople, setSelectedPeople] = useState([1, 0, 0, 0, 0]);
 
     const [selectedVehi, setSelectedVehi] = useState([]);
 
     const isFocused = useIsFocused();
 
-    let {showBottomTab, setShowBottomTab} = useContext(TabStateContext)
+    let { showBottomTab, setShowBottomTab } = useContext(TabStateContext)
+
+    const { setAlert } = useContext(AlertContext);
 
     // const [selectedVehicles, setSelectedVehicles] = useState([])
 
@@ -103,21 +113,21 @@ export default function ReservationScreen() {
 
     let { params } = useRoute();
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         let curr = page
-    //         if (page < imgs.length - 1) {
-    //             curr += 1
-    //         } else {
-    //             curr = 0
-    //         }
+    useEffect(() => {
+        setTimeout(() => {
+            let curr = page
+            if (page < imgs.length - 1) {
+                curr += 1
+            } else {
+                curr = 0
+            }
 
-    //         if (curr != page) {
-    //             setPage(curr)
-    //         }
+            if (curr != page) {
+                setPage(curr)
+            }
 
-    //     }, 5000)
-    // }, [page])
+        }, 5000)
+    }, [page])
 
     useEffect(() => {
         if (params && params.selectedDates) {
@@ -147,34 +157,18 @@ export default function ReservationScreen() {
 
     useEffect(() => {
         if (selectedDest[0] != -1 && selectedDest[1] != -1) {
-            // console
             let tmpStr = destinations[selectedDest[0]].data[selectedDest[1]][1];
 
-
             tmpStr = [...tmpStr.split(" ")[0].split("-"), tmpStr.split(" ")[1]]
-
-            // console.log('--------------------------------------------------  tmpStr  --------------------------------------------------')
-            // console.log(tmpStr)
-            // console.log('--------------------------------------------------  tmpStr  --------------------------------------------------')
 
             destinations.forEach((ele, ind) => {
                 ele.data.forEach((eled, indo) => {
                     let tmpstr1 = [...eled[1].split(" ")[0].split("-"), eled[1].split(" ")[1]]
-
-                    // console.log('--------------------------------------------------  tmpStr1  --------------------------------------------------')
-                    // console.log(tmpstr1)
-                    // console.log('--------------------------------------------------  tmpStr1  --------------------------------------------------')
-                    // console.log(selectedDest)
                     if (arrayCompare(tmpStr, tmpstr1)) {
                         if (!(selectedDest[0] == ind && selectedDest[1] == indo)) {
                             setSelectedDest1([ind, indo])
                         }
-                        // console.log("------------------------------- True -------------------------", ind, indo)
-                        // console.log("------------------------------- True -------------------------", selectedDest[0] == ind, selectedDest[1] == indo)
-                        // i++;
                     }
-
-                    // console.log(eled)
 
                 })
             })
@@ -195,20 +189,20 @@ export default function ReservationScreen() {
 
     return (
         <View style={styles.container} >
-            <ImageBackground source={{ uri: imgs[page] }} style={styles.fi_sc} >
+            <ImageBackground source={{ uri: imgs[page] }} style={[styles.fi_sc, { height: isBig ? 400 : 'auto' }]} >
                 <View style={{ position: 'absolute', width: '1000%', height: '1000%', backgroundColor: 'rgba(0,0,0,0.3)', flex: 1 }} />
                 <View style={{ alignItems: 'center', justifyContent: 'center' }} >
                     <View style={{ ...styles.rw, alignItems: 'flex-end' }} >
-                        <AntDesign name="star" size={12} color="#e3e3e3" />
-                        <AntDesign name="star" size={15} color="#ff9300" />
-                        <AntDesign name="star" size={12} color="#e3e3e3" />
+                        <AntDesign name="star" size={12 * (isBig ? 2 : 1)} color="#e3e3e3" />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color="#ff9300" />
+                        <AntDesign name="star" size={12 * (isBig ? 2 : 1)} color="#e3e3e3" />
                     </View>
-                    <Image resizeMode='contain' style={{ width: 220, height: 50 }} source={require('../assets/images/logo.png')} />
+                    <Image resizeMode='contain' style={{ width: 220 * (isBig ? 2 : 1), height: 50 * (isBig ? 2 : 1) }} source={require('../assets/images/logo.png')} />
                 </View>
-                <Text style={{ fontFamily: 'Gilroy-Heavy', fontSize: 30, marginBottom: 30, ...styles.white, textAlign: 'center' }} >
+                {/* <Text style={{ fontFamily: 'Gilroy-Heavy', fontSize: 30, marginBottom: 30, ...styles.white, textAlign: 'center' }} >
                     Réservez votre voyage
-                </Text>
-                <View style={styles.rw} >
+                </Text> */}
+                <View style={[styles.rw, { alignSelf: 'center', marginTop: isBig ? 20 : 0 }]} >
                     <TouchableOpacity onPress={() => {
                         if (selectedBtn != 0) {
                             setSelectedDates([])
@@ -216,7 +210,7 @@ export default function ReservationScreen() {
 
                         setSelectedBtn(0)
                     }} style={selectedBtn == 0 ? { ...styles.selectedBtn, marginRight: 30 } : {}} >
-                        <Text style={{ fontFamily: 'Gilroy-Bold', ...styles.white }} >
+                        <Text style={{ fontFamily: 'Gilroy-Bold', ...styles.white, ...styles.resp_txt }} >
                             Aller et Retour
                         </Text>
                     </TouchableOpacity>
@@ -228,7 +222,7 @@ export default function ReservationScreen() {
                         setSelectedDates(tmpSel)
                         setSelectedBtn(1)
                     }} style={selectedBtn == 1 ? { ...styles.selectedBtn, marginLeft: 30 } : {}}>
-                        <Text style={{ fontFamily: 'Gilroy-Bold', color: '#fff' }} >
+                        <Text style={{ fontFamily: 'Gilroy-Bold', color: '#fff', ...styles.resp_txt }} >
                             Aller Simple
                         </Text>
                     </TouchableOpacity>
@@ -279,7 +273,7 @@ export default function ReservationScreen() {
                             <AntDesign size={20} style={{ marginRight: 10 }} color="gray" name="calendar" />
                             <Text style={{ fontFamily: 'Gilroy-SemiBold' }} >
                                 {
-                                    selectedDates.length < 1 ? dayjs().format('DD/MM/YYYY') : selectedDates[0]
+                                    selectedDates.length < 1 ? 'Ajouter un aller' : selectedDates[0]
                                 }
                             </Text>
                         </TouchableOpacity>
@@ -293,8 +287,8 @@ export default function ReservationScreen() {
                                 navigation.navigate('calendar', { dates: datesAvailable["retour"], type: 'come', selected: selectedDates })
                             }
                         }} style={{ borderWidth: 1, borderColor: '#c7c7c7', borderRadius: 10, ...styles.rw, padding: 10 }} >
-                            <AntDesign size={20} style={{ marginRight: 10 }} color="gray" name="plus" />
-                            <Text style={{ fontFamily: 'Gilroy-SemiBold', color: '#c7c7c7' }} >
+                            <AntDesign size={20} style={{ marginRight: 10 }} color="black" name="calendar" />
+                            <Text style={{ fontFamily: 'Gilroy-SemiBold', color: 'black' }} >
                                 {
                                     selectedDates.length < 2 ? 'Ajouter un retour' : selectedDates[1]
                                 }
@@ -312,13 +306,13 @@ export default function ReservationScreen() {
                         }
                     }} style={{ borderWidth: 1, borderColor: '#c7c7c7', borderRadius: 10, ...styles.rw, padding: 10, justifyContent: 'space-around' }} >
                         <View style={styles.rw} >
-                            <FontAwesome5 name="baby" size={24} color="gray" />
+                            <Entypo name="man" size={24} color="gray" />
                             <Text style={{ fontFamily: 'Gilroy-SemiBold', marginLeft: 10, color: 'gray' }} >
                                 {selectedPeople[0]}
                             </Text>
                         </View>
                         <View style={styles.rw} >
-                            <Entypo name="man" size={24} color="gray" />
+                            <FontAwesome5 name="baby" size={24} color="gray" />
                             <Text style={{ fontFamily: 'Gilroy-SemiBold', marginLeft: 10, color: 'gray' }} >
                                 {selectedPeople[1]}
                             </Text>
@@ -409,29 +403,39 @@ export default function ReservationScreen() {
 
             {showAgePicker && <BottomModal secBtn onPresso={() => setShowAgePicker(false)} onPress={() => { setShowAgePicker(false) }} >
                 <PassengersRow value={selectedPeople[0]} onChange={(val) => {
-                    let tmp = [...selectedPeople]
-                    tmp[0] = val
-                    setSelectedPeople(tmp)
-                }} subTit={`(<${agesConstraints.Age_min} ans)`} name='baby' title="Bébé(s)" />
-                <PassengersRow value={selectedPeople[1]} onChange={(val) => {
-                    let tmp = [...selectedPeople]
-                    tmp[1] = val
-                    setSelectedPeople(tmp)
+                    if (val > 0) {
+                        let tmp = [...selectedPeople]
+                        tmp[0] = val
+                        setSelectedPeople(tmp)
+                    }
                 }} subTit={`(>=${agesConstraints.Age_max} ans)`} icon='ent' name="man" title="Adultes" />
+                <PassengersRow value={selectedPeople[1]} onChange={(val) => {
+                    if (val >= 0) {
+                        let tmp = [...selectedPeople]
+                        tmp[1] = val
+                        setSelectedPeople(tmp)
+                    }
+                }} subTit={`(<${agesConstraints.Age_min} ans)`} name='baby' title="Bébé(s)" />
                 <PassengersRow value={selectedPeople[2]} onChange={(val) => {
-                    let tmp = [...selectedPeople]
-                    tmp[2] = val
-                    setSelectedPeople(tmp)
+                    if (val >= 0) {
+                        let tmp = [...selectedPeople]
+                        tmp[2] = val
+                        setSelectedPeople(tmp)
+                    }
                 }} subTit={`(${agesConstraints.Age_min}-${agesConstraints.Age_max} ans)`} name="child" title="Enfants" />
                 <PassengersRow value={selectedPeople[3]} onChange={(val) => {
-                    let tmp = [...selectedPeople]
-                    tmp[3] = val
-                    setSelectedPeople(tmp)
+                    if (val >= 0) {
+                        let tmp = [...selectedPeople]
+                        tmp[3] = val
+                        setSelectedPeople(tmp)
+                    }
                 }} name="dog" title="Chiens" />
                 <PassengersRow value={selectedPeople[4]} onChange={(val) => {
-                    let tmp = [...selectedPeople]
-                    tmp[4] = val
-                    setSelectedPeople(tmp)
+                    if (val >= 0) {
+                        let tmp = [...selectedPeople]
+                        tmp[4] = val
+                        setSelectedPeople(tmp)
+                    }
                 }} name="cat" title="Chats" />
             </BottomModal>}
 
@@ -459,6 +463,9 @@ export default function ReservationScreen() {
                                                     setAgesConstraints(response.ageConstraints);
                                                     setVehicles(response.vehicles);
                                                 })
+
+                                                setSelectedDates([])
+                                                setSelectedPeople([1, 0, 0, 0, 0])
                                             }} style={{ marginVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }} >
                                                 <Text style={{ fontFamily: 'Gilroy-Bold' }}>
                                                     {
@@ -508,10 +515,11 @@ export default function ReservationScreen() {
                                         </Text>
                                         <View style={[styles.rw, { marginLeft: 10 }]} >
                                             <SelectionControls onChange={(val) => {
-                                                let tmpSlcVe = [...selectedVehi];
-                                                tmpSlcVe[selectedTab][index] = val;
-                                                setSelectedVehi(tmpSlcVe)
-
+                                                if (val >= 0) {
+                                                    let tmpSlcVe = [...selectedVehi];
+                                                    tmpSlcVe[selectedTab][index] = val;
+                                                    setSelectedVehi(tmpSlcVe)
+                                                }
                                             }} value={selectedVehi[selectedTab][index]} />
 
                                         </View>
@@ -532,16 +540,72 @@ export default function ReservationScreen() {
                 // console.log(destinations[selectedDest1[0]].data[selectedDest1[1]][0]);
                 // console.log(selectedDates)
 
+                let arro = [['Adultes', 'Adulte', 'nb_adultes'], ['Bébés', 'bébé', 'nb_bebes'], ['Enfants', 'enfant', 'nb_enfants'], ['Chats', 'Chat', 'nb_chats'], ['Chiens', 'Chien', 'nb_chiens']];
+                let tmpSH = {}
+                let tmpSH1 = {}
+
                 if (selectedBtn == 0 && selectedDates.length == 2 && selectedDest1[0] != -1 && selectedDest1[1] != -1 && selectedDest[0] != -1 && selectedDest[1] != -1 || selectedBtn == 1 && selectedDates.length == 1 && selectedDest[0] != -1 && selectedDest[1] != -1) {
-                    setLoading(true);
-                    navigation.navigate('search', { dest1: destinations[selectedDest[0]].data[selectedDest[1]][0], dest2: destinations[selectedDest1[0]].data[selectedDest1[1]][0], selectedDates })
+                    let summedStr = ''
+
+                    selectedVehi.forEach((it, index) => {
+                        // console.log('---------------------')
+                        let sum = 0;
+
+                        selectedVehi[index].forEach((num) => {
+                            sum += num
+                        })
+
+                        tmpSH[arr[index][4]] = sum
+                        // console.log(selectedVehi[index])
+                        // console.log(, sum)
+                        summedStr += sum == 0 ? '' : sum > 1 ? (summedStr.length > 0 ? ' ' : '') + sum + ' ' + arr[index][2] : (summedStr.length > 0 ? ' ' : '') + sum + ' ' + arr[index][3]
+                        // console.log('---------------------')
+                    })
+
+
+                    let summedStr1 = '';
+                    selectedPeople.forEach((it, index) => {
+                        let sum = it;
+                        tmpSH1[arro[index][2]] = it
+                        summedStr1 += sum == 0 ? '' : sum > 1 ? (summedStr1.length > 0 ? ' + ' : '') + sum + ' ' + arro[index][0] : (summedStr1.length > 0 ? ' + ' : '') + sum + ' ' + arro[index][1]
+                    })
+
+                    // console.log(summedStr)
+                    // console.log(summedStr1)
+
+                    if (summedStr.length > 0 && summedStr1.length > 0) {
+                        setLoading(true);
+                        let nbPassengers = 0
+
+                        Object.keys(tmpSH1).forEach((key) => {
+                            nbPassengers += tmpSH1[key]
+                        })
+
+                        navigation.navigate('search', { dest1: destinations[selectedDest[0]].data[selectedDest[1]][0], dest2: destinations[selectedDest1[0]].data[selectedDest1[1]][0], selectedDates, passengers: summedStr1, vehicles: summedStr, obj_ve_pass: { ...tmpSH1, ...tmpSH }, nbPassengers })
+                        setTimeout(() => {
+                            setLoading(false)
+                        }, 100)
+                    } else {
+                        setAlert({ type: 'warn', msg: 'il faut choisir toutes les informations nécessaires' })
+                        setTimeout(() => {
+                            setAlert({ type: '', msg: '' })
+                        }, 5000);
+                    }
+
+                } else {
+                    setAlert({ type: 'warn', msg: 'il faut choisir toutes les informations nécessaires' })
                     setTimeout(() => {
-                        setLoading(false)
-                    }, 100)
+                        setAlert({ type: '', msg: '' })
+                    }, 5000);
                 }
-            }} style={styles.btn} >
-                {!loading ? <Feather name="search" size={24} color="white" /> :
+
+                // console.log(selectedVehi, '-----------', selectedPeople)
+            }} style={[styles.btn, { width: 'auto', flexDirection: 'row', paddingHorizontal: 15 }]} >
+                {!loading ? <Feather name="search" size={20} color="white" /> :
                     <ActivityIndicator size={17} color='white' />}
+                <Text style={{ color: 'white', fontFamily: 'Gilroy-Bold', marginLeft: 10 }}>
+                    Rechercher
+                </Text>
             </TouchableOpacity>
         </View>
     )
@@ -551,26 +615,29 @@ const styles = StyleSheet.create({
     container: {
         position: 'relative',
         flex: 1,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        paddingTop: Constants.statusBarHeight
     },
     rw: {
         flexDirection: 'row',
         alignItems: 'center'
     },
     fi_sc: {
-        backgroundColor: '#414780',
+        backgroundColor: Colors.main,
         paddingHorizontal: 30,
-        paddingTop: 40,
+        paddingTop: 20,
         borderBottomLeftRadius: 60,
         position: 'relative',
         overflow: 'hidden',
-        paddingBottom: 20
+        paddingBottom: 20,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     white: {
         color: 'white'
     },
     btn: {
-        backgroundColor: '#414780',
+        backgroundColor: Colors.main,
         position: 'absolute',
         bottom: 70,
         width: 50,
@@ -578,10 +645,11 @@ const styles = StyleSheet.create({
         borderRadius: 50 / 2,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingBottom: 20,
-        paddingTop: 20,
+        // paddingBottom: 20,
+        // paddingTop: 20,
         zIndex: 5,
-        right: 10
+        // right: 10,
+        alignSelf: 'center'
     },
     txt_ntb: {
         fontFamily: 'Gilroy-Bold',
@@ -592,5 +660,8 @@ const styles = StyleSheet.create({
         fontFamily: 'Gilroy-Bold',
         fontSize: 13,
     },
-    selectedBtn: { paddingVertical: 10, paddingHorizontal: 20, backgroundColor: '#2ebbab', borderRadius: 25 }
+    selectedBtn: { paddingVertical: 10, paddingHorizontal: 20, backgroundColor: Colors.main, borderRadius: 25 },
+    resp_txt: {
+        fontSize: isBig ? 20 : 15
+    }
 })

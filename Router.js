@@ -21,10 +21,16 @@ import { TabStateContext } from './context/TabManager';
 
 import { routes } from './helpers/OtherData';
 
-import OtherScreens from './screens/OtherScreens'
+import OtherScreens from './screens/OtherScreens';
+
+import AlertMessage from './components/AlertMessage';
+
+import { AlertContext } from './context/AlertManager';
 
 export default function Router() {
     let { showBottomTab } = useContext(TabStateContext);
+
+    const { alert } = useContext(AlertContext);
 
     let route = useRoute();
 
@@ -58,7 +64,7 @@ export default function Router() {
         // <HeightSelectionScreen />
         // <WebViewScreen />
         <>
-            <StatusBar backgroundColor='black' style='light' />
+            <StatusBar  style='dark' />
             <Stack.Navigator>
                 <Stack.Screen name="home" options={{ headerShown: false }} component={HomeScreen} />
                 {/* <Stack.Screen name={arr[0][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[0]} />} /> */}
@@ -68,6 +74,7 @@ export default function Router() {
                 <Stack.Screen name={arr[4][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[3]} />} />
             </Stack.Navigator>
             {showBottomTab && <BottomTabBar arr={arr} />}
+            {alert.type != '' && alert.msg != '' && <AlertMessage title={alert.msg} type={alert.type} />}
         </>
     )
 }

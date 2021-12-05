@@ -5,12 +5,14 @@ import { AntDesign, Entypo } from '@expo/vector-icons';
 
 import SelectionControls from '../components/SelectionControls';
 
+import Colors from '../helpers/Colors';
+
 export default function CardItem({ title, price, onChange, value, swr, wc, win, capacity, bed }) {
     return (
         <View style={styles.wrapper}>
-            <View style={styles.row}>
+            <View style={[styles.row, { alignItems: 'center' }]}>
                 <View style={styles.flx}>
-                    <Text style={styles.font_bld} >
+                    <Text style={[styles.font_bld, { color: Colors.main }]} >
                         {title}
                     </Text>
                 </View>
@@ -64,7 +66,7 @@ export default function CardItem({ title, price, onChange, value, swr, wc, win, 
             </View>
             <View style={[styles.row, { marginTop: 10 }]}>
                 <Text style={[styles.font_bld, { fontSize: 16 }]}>Prix :</Text>
-                <Text style={styles.font_reg}>{price.split(' ')[0]} <Text style={{ fontFamily: 'Gilroy-Thin', color: 'blue' }}>{price.split(' ')[1]}</Text> </Text>
+                <Text style={[[styles.font_reg, { color: 'blue', fontFamily: 'Gilroy-Heavy' }]]}>{price.split(' ')[0]} <Text style={{ fontFamily: 'Gilroy-Thin', color: 'blue' }}>{price.split(' ')[1]}</Text> </Text>
             </View>
         </View>
     )

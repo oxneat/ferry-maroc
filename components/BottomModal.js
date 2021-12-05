@@ -1,17 +1,23 @@
-import React from 'react'
-import { TouchableOpacity, View, ScrollView, Dimensions } from 'react-native'
+import React, { useEffect } from 'react';
+import { TouchableOpacity, View, ScrollView, Dimensions, StyleSheet } from 'react-native'
 
 import { Entypo } from '@expo/vector-icons';
 
 import Constants from 'expo-constants';
 
-let { height } = Dimensions.get('window');
+let { height, width } = Dimensions.get('window');
 
 export default function BottomModal({ onPress, children, secBtn, onPresso, bottom = 60 }) {
+    // useEffect(() => {
+    //     console.log("---------------------Aspect Ratio-----------------")
+    //     // console.log(parseFloat(parseFloat(height/width).toFixed(2)))
+    //     console.log("---------------------Aspect Ratio-----------------")
+    // }, [])
+
     return (
         <View style={{ backgroundColor: 'rgba(0,0,0,0.5)', height: '100%', width: '100%', position: 'absolute', zIndex: 6, bottom: bottom }} >
             <View style={{ position: 'absolute', width: '100%', backgroundColor: 'white', bottom: 0, paddingTop: 10, paddingHorizontal: 20 }}>
-                <View style={{ maxHeight: (height - Constants.statusBarHeight) * 0.8, backgroundColor: 'white', width: '100%', }}>
+                <View style={{ maxHeight: (height - Constants.statusBarHeight) * (parseFloat(parseFloat(height / width).toFixed(2)) <= 1.78 ? 0.6 : 0.8), backgroundColor: 'white', width: '100%', }}>
                     <ScrollView showsVerticalScrollIndicator={false} >
                         {
                             children
@@ -20,10 +26,10 @@ export default function BottomModal({ onPress, children, secBtn, onPresso, botto
                 </View>
                 <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', paddingVertical: 5, backgroundColor: 'white' }}>
                     <View style={{ flexDirection: 'row', alignSelf: 'center' }} >
-                        <TouchableOpacity onPress={onPress} style={{ backgroundColor: 'white', elevation: 5, width: 50, height: 50, borderRadius: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center' }} >
+                        <TouchableOpacity onPress={onPress} style={styles.cls_btn} >
                             <Entypo name="cross" size={24} color="black" />
                         </TouchableOpacity>
-                        {secBtn && <TouchableOpacity onPress={onPresso} style={{ backgroundColor: '#03fc3d', elevation: 5, width: 50, height: 50, borderRadius: 25, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', marginLeft: 10 }} >
+                        {secBtn && <TouchableOpacity onPress={onPresso} style={[styles.cls_btn, { backgroundColor: '#03fc3d', marginLeft: 10 }]} >
                             <Entypo name="check" size={24} color="white" />
                         </TouchableOpacity>}
                     </View>
@@ -32,3 +38,24 @@ export default function BottomModal({ onPress, children, secBtn, onPresso, botto
         </View>
     )
 }
+
+let styles = StyleSheet.create({
+    cls_btn: {
+        backgroundColor: 'white',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+
+        elevation: 6,
+    }
+})

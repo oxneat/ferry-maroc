@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
+
+import { StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator, TouchableOpacity, Platform, Alert } from 'react-native';
 
 import Constants from 'expo-constants';
 
@@ -17,6 +18,8 @@ import { useRoute } from '@react-navigation/native';
 
 import { Ionicons } from '@expo/vector-icons';
 
+import { isSmall, isBig } from '../helpers/Dimension';
+
 function getRandomIntInclusive(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -33,10 +36,16 @@ import FoodRow from '../components/FoodRow';
 
 import { TabStateContext } from '../context/TabManager';
 
+import { AlertContext } from '../context/AlertManager';
+
+import Colors from '../helpers/Colors';
+
 export default function WebViewScreen() {
     const [results, setResults] = useState([]);
 
     const { setShowBottomTab } = useContext(TabStateContext)
+
+    const { setAlert } = useContext(AlertContext);
 
     const [selectedResult, setSelectedResult] = useState(-1);
 
@@ -54,11 +63,13 @@ export default function WebViewScreen() {
 
     const [removeContent, setRemoveContent] = useState(false);
 
+    const [Total, setTotal] = useState([0, 0]);
+
     // useEffect(() => {
-    //     console.log('--------------- Results --------------------------');
-    //     console.log(results);
-    //     console.log('--------------- Results --------------------------');
-    // }, [results])
+    //     console.log('--------------- params --------------------------');
+    //     console.log();
+    //     console.log('--------------- params --------------------------');
+    // }, [params])
 
     const [showWebView, setShowWebView] = useState(true);
 
@@ -70,14 +81,51 @@ export default function WebViewScreen() {
 
     const [loading, setLoading] = useState(false);
 
+    const [titleHd, setTitleHd] = useState('Resultats');
+
+    const [pricePopUp, setPricePopUp] = useState('');
+
+    useEffect(() => {
+        console.log("--------------Total--------------")
+        console.log(Total)
+        console.log("--------------Total--------------")
+    }, [Total])
+
     return (
         <View style={styles.wrpr}>
-            <TopBar title="Resultats" onBack={() => navigation.goBack()} />
+            <TopBar title={titleHd} onBack={() => {
+                if (titleHd == 'Confirmation & paiement') {
+                    Alert.alert('', "Souhaitez-vous abandonner cette réservation ?", [{
+                        style: 'cancel',
+                        text: "Non"
+                    }, {
+                        style: 'default',
+                        onPress: () => navigation.goBack(),
+                        text: 'Oui'
+                    }])
+                } else {
+                    navigation.goBack()
+                }
+            }} />
             <View style={styles.wv}>
                 {showWebView && <WebView style={{ paddingTop: 40 }} source={{ uri: mainEndPoint + endPoint }} injectedJavaScript={`
                 function selectElement(id, valueToSelect) {    
                     let element = document.getElementById(id);
                     element.value = valueToSelect;
+                }
+
+                if(document.querySelector('#detailsRes') != null){
+                    Array.from(document.querySelector('#detailsRes').children).forEach((it,ind)=>{
+                        if(ind>1){
+                            it.remove()
+                        }
+                    })
+
+                    document.querySelector('#detailsRes').nextElementSibling.remove()
+
+                    document.querySelector('#detailsRes').nextElementSibling.remove()
+
+                    document.querySelector('#recevoirDevis').remove()
                 }
 
                 document.querySelector('#main-header').remove()
@@ -86,6 +134,10 @@ export default function WebViewScreen() {
                 document.querySelector('#main-footer').remove()
                 if(document.querySelector('.text-bouton-recherche')!=null){
                     document.querySelector('.text-bouton-recherche').remove()
+                }
+
+                if (document.querySelector(".row.breadcrumb") != null) {
+                    document.querySelector(".row.breadcrumb").remove()
                 }
 
                 if(${endPoint == '/'} == true || ${endPoint == '/resultats'} == true ){
@@ -129,7 +181,7 @@ export default function WebViewScreen() {
                                         if(document.querySelector('#prix_total').children.length>0){
                                             window.ReactNativeWebView.postMessage(JSON.stringify({
                                                 type:'price',
-                                                price:document.querySelector('#prix_total').innerText
+                                                price:${Platform.OS == 'ios'} == true ? document.querySelector('#prix_total').innerHTML : document.querySelector('#prix_total').innerText
                                             }))
                                         }
                                         Array.from(document.querySelectorAll('.btn.btn-primary.btn-lg')).filter((it)=>it.type == 'submit')[0].click()
@@ -195,8 +247,9 @@ export default function WebViewScreen() {
                                     //         tp_det.push(tmpDetail);
                                     //     }
                                     // })
+
                                     if(!trIt.className.includes('hidden')){
-                                        tp_det.push({title:trIt.querySelectorAll('td')[0].innerText,capacity:trIt.querySelectorAll('td')[1].children.length,bed:trIt.querySelectorAll('td')[2].children[0].attributes["data-original-title"].value,win:trIt.querySelectorAll('td')[3].children.length,swr:trIt.querySelectorAll('td')[4].children.length,wc:trIt.querySelectorAll('td')[5].children.length,max:trIt.querySelectorAll('td')[6].children[0].children[trIt.querySelectorAll('td')[6].children[0].children.length-1].innerText,price:trIt.querySelectorAll('td')[7].innerText})
+                                        tp_det.push({title:${Platform.OS == 'ios'} == true ? trIt.querySelectorAll('td')[0].innerHTML: trIt.querySelectorAll('td')[0].innerText,capacity:trIt.querySelectorAll('td')[1].children.length,bed:trIt.querySelectorAll('td')[2].children[0].attributes["data-original-title"].value,win:trIt.querySelectorAll('td')[3].children.length,swr:trIt.querySelectorAll('td')[4].children.length,wc:trIt.querySelectorAll('td')[5].children.length,max:trIt.querySelectorAll('td')[6].children[0].children[trIt.querySelectorAll('td')[6].children[0].children.length-1].innerText,price: ${Platform.OS == 'ios'} == true ? trIt.querySelectorAll('td')[7].innerHTML : trIt.querySelectorAll('td')[7].innerText})
                                     }
                             })
                             
@@ -212,7 +265,7 @@ export default function WebViewScreen() {
                             let tmpFdSelection = []
                             item.nextElementSibling.children[0].querySelectorAll('.panel-body.collapse.in').forEach((it)=>{
                                 it.querySelectorAll('.col-md-8').forEach((itm)=>{
-                                    tmpFdSelection.push(itm.innerText)
+                                    tmpFdSelection.push(${Platform.OS == 'ios'} == true ? itm.innerHTML :itm.innerText )
                                 })
                             })
 
@@ -234,9 +287,18 @@ export default function WebViewScreen() {
                         }))
                     }
 
+                    let frm = document.querySelector('#recherche_moteur').querySelectorAll('input')
+                    if (frm.legth > 0) {
+                        let obj_rand = ${JSON.stringify(params.obj_ve_pass)}
+                        
+                        Array.from(frm).filter((it)=>it.name.includes('nb')).forEach((it)=>{
+                            it.value = obj_rand[it.id]
+                        })
+                    }
 
                     selectElement('allee', '${params.dest1}');
-                    document.querySelector('#vehicules').value="1 Véhicule";
+                    document.querySelector('#passag').value='${params.passengers}';
+                    document.querySelector('#vehicules').value='${params.vehicles}';
                     document.querySelector('#date_depart').value='${params.selectedDates[0]}';
 
                     if (${params.selectedDates.length < 2} == true) {
@@ -316,9 +378,19 @@ export default function WebViewScreen() {
                             setResults(tmpData.data);
                             setIsEmpty(2)
                         } else if (tmpData.type == 'price') {
+                            // setPricePopUp(tmpData.price)
+
+                            // setIsEmpty(0)
+
+
                             setTimeout(() => {
                                 setRemoveContent(true)
+                                setTitleHd('Confirmation & paiement')
                             }, 1000);
+
+                            setTimeout(() => {
+                                setIsEmpty(1)
+                            }, 4000);
                         } else {
                             console.log('-----------------Timed Out-------------------')
                             console.log(tmpData)
@@ -329,33 +401,74 @@ export default function WebViewScreen() {
             </View>
 
             {!removeContent && <View style={{ backgroundColor: '#414780', height: '100%', flex: 1, position: 'relative', bottom: 0 }}>
-                {isEmpty == 2 && results.length > 0 && <ScrollView style={styles.scr_wrp}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: 20 }}>
+                    <Text style={{ fontFamily: 'Gilroy-Heavy', color: Colors.main, fontSize: 20 }}>
+                        Prix Total :
+                    </Text>
+                    <Text style={{ fontFamily: 'Gilroy-Bold', color: 'white', fontSize: 18 }}>
+                        {(Total[0] + Total[1]).toFixed(2)} Eur
+                    </Text>
+
+                </View>
+                {isEmpty == 2 && results.length > 0 && <ScrollView style={[styles.scr_wrp, { paddingTop: 0 }]}>
                     {
                         results.map((item, index) => {
                             return (
-                                <ResultCard onMore={() => setSelectedResult(index)} fullDate={`${item.date.split('\n')[0]} ${item.date.split('\n')[1]} ${item.date.split('\n')[2]}`} key={index + ' rc'} fromCountry='MAR' toCountry='FRA' from={item.destinations.split(' ')[0]} code={item.code_voyage} departureHour={item.time_data[1].split('\n')[0]} arrivalHour={item.time_data[2].split('\n')[0]} duration={item.other[0]} to={item.destinations.split(' ')[2]} uri={item.img} />
+                                <ResultCard total={Total[index]} onMore={() => {
+                                    setSelectedResult(index)
+                                    console.log(item)
+                                }} fullDate={`${item.date.split('\n')[0]} ${item.date.split('\n')[1]} ${item.date.split('\n')[2]}`} key={index + ' rc'} fromCountry='MAR' toCountry='FRA' from={item.destinations.split(' ')[0]} code={item.code_voyage} departureHour={item.time_data[1].split('\n')[0]} arrivalHour={item.time_data[2].split('\n')[0]} duration={item.other[0]} to={item.destinations.split(' ')[2]} uri={item.img} />
                             )
                         })
                     }
                 </ScrollView>}
                 {isEmpty == 1 && <View style={[styles.scr_wrp, { alignItems: 'center', justifyContent: 'center', flex: 1 }]}>
                     <Text style={{ color: 'white', fontFamily: 'Gilroy-Medium' }}>
-                        Aucun Voyage n'est trouvé
+                        Aucune traversée à cette date
                     </Text>
                 </View>}
 
-                {results.length > 0 && selectedOptionsRoom.length > 0 && selectedResult > -1 && <BottomModal bottom={0} onPress={() => setSelectedResult(-1)}>
+                {results.length > 0 && selectedOptionsRoom.length > 0 && selectedResult > -1 && <BottomModal secBtn onPresso={() => setSelectedResult(-1)} bottom={0} onPress={() => setSelectedResult(-1)}>
                     {
                         results[selectedResult].details.map((item, index) => {
 
-                            return <CardItem onChange={(value) => {
+                            return <CardItem onChange={(value, valType) => {
                                 // console.log(selectedOptionsRoom)
-                                if (value <= parseInt(item.max) && value >= 0) {
-                                    let tmpSel = [...selectedOptionsRoom]
-                                    tmpSel[selectedResult][index] = value
-                                    setSelectedOptionsRoom(tmpSel)
+                                let tmpPrce = Platform.OS == 'ios' ? item.price.replace(/<[^>]*>?/gm, '').replaceAll('\n', '').replaceAll('  ', '') : item.price
+
+                                // console.log("----------------- tmpPrce ----------------")
+                                // console.log(parseFloat(tmpPrce.split(' ')[0]))
+                                // console.log("----------------- tmpPrce ----------------")
+
+                                let nbCurrent = 0;
+
+                                selectedOptionsRoom[selectedResult].forEach((it) => {
+                                    nbCurrent += it;
+                                })
+
+                                console.log('-------------- valType --------------------')
+                                console.log(valType)
+                                console.log('-------------- valType --------------------')
+
+                                if (nbCurrent < params.nbPassengers || valType == 'minus') {
+                                    if (value <= parseInt(item.max) && value >= 0) {
+                                        let tmpSel = [...selectedOptionsRoom]
+                                        tmpSel[selectedResult][index] = value
+                                        setSelectedOptionsRoom(tmpSel)
+
+                                        let tmpTot = [...Total]
+                                        tmpTot[selectedResult] = tmpTot[selectedResult] + parseFloat(tmpPrce.split(' ')[0]) * value
+                                        setTotal(tmpTot)
+                                    }
+                                } else {
+                                    let typeTr = selectedResult == 0 ? 'l\'aller' : 'le retour'
+                                    setAlert({ type: 'err', msg: `Le nombre d'accommodation choisi pour ${typeTr} est supérieur au nombre de passagers` })
+                                    setTimeout(() => {
+                                        setAlert({ type: '', msg: '' })
+                                    }, 5000);
                                 }
-                            }} value={selectedOptionsRoom[selectedResult][index]} price={item.price} capacity={item.capacity} swr={parseInt(item.swr) > 0} win={parseInt(item.win) > 0} wc={parseInt(item.wc) > 0} title={item.title} bed={item.bed} key={index + ' qsdqs 55'} />
+
+                            }} value={selectedOptionsRoom[selectedResult][index]} price={Platform.OS == 'ios' ? item.price.replace(/<[^>]*>?/gm, '').replaceAll('\n', '').replaceAll('  ', '') : item.price} capacity={item.capacity} swr={parseInt(item.swr) > 0} win={parseInt(item.win) > 0} wc={parseInt(item.wc) > 0} title={Platform.OS == 'ios' ? (item.title.replace(/<[^>]*>?/gm, '')).replaceAll('\n', '').replaceAll('  ', '') : item.title} bed={item.bed} key={index + ' qsdqs 55'} />
                         })
                     }
                     {
@@ -375,19 +488,50 @@ export default function WebViewScreen() {
                 </BottomModal>}
             </View>}
             {isEmpty == 0 && <View style={styles.ldr_wrpr}>
-                <View style={styles.ldr_cntnt}>
+                <View style={[styles.ldr_cntnt, pricePopUp.length > 0 && isEmpty == 0 ? { width: '80%' } : {}]}>
                     <ActivityIndicator color='black' size={26} />
                 </View>
             </View>}
-            {!(selectedResult > -1) && isEmpty != 0 && !removeContent && <TouchableOpacity onPress={() => {
-                setEndPoint('/resultats')
-                setShowWebView(false)
-                setTimeout(() => {
-                    setShowWebView(true)
-                }, 0);
+            {!(selectedResult > -1) && isEmpty != 0 && !removeContent && isEmpty != 1 && <TouchableOpacity onPress={() => {
 
-                setLoading(true);
+                let areOptionsValid = selectedOptionsRoom.map(() => false);
+
+                selectedOptionsRoom.forEach((item, index) => {
+                    let tmpSum = 0;
+
+                    item.forEach((it) => {
+                        tmpSum += it
+                    })
+
+                    if (tmpSum > 0) {
+                        areOptionsValid[index] = true
+                    }
+                })
+
+                let isValid = true
+
+                areOptionsValid.forEach((condition) => {
+                    if (!condition) {
+                        isValid = false
+                    }
+                })
+
+                if (isValid) {
+                    setEndPoint('/resultats')
+                    setShowWebView(false)
+                    setTimeout(() => {
+                        setShowWebView(true)
+                    }, 0);
+
+                    setLoading(true);
+                } else {
+                    setAlert({ type: 'warn', msg: 'Toutes les options ne sont pas selectionnées' })
+                    setTimeout(() => {
+                        setAlert({ type: '', msg: '' })
+                    }, 5000);
+                }
             }} style={styles.submitBtn}>
+                <Text style={{ fontFamily: 'Gilroy-Bold', marginRight: 10 }}>Continuer</Text>
                 {!loading ? <Ionicons name="arrow-forward" size={24} color="black" /> : <ActivityIndicator color='black' size={24} />}
             </TouchableOpacity>}
         </View>
@@ -398,7 +542,7 @@ const styles = StyleSheet.create({
     wrpr: {
         paddingTop: Constants.statusBarHeight,
         position: 'relative',
-        backgroundColor: '#089082',
+        // backgroundColor: '#089082',
         flex: 1
     },
     wv: {
@@ -432,14 +576,17 @@ const styles = StyleSheet.create({
     },
     submitBtn: {
         position: 'absolute',
-        bottom: 10,
-        width: 50,
-        height: 50,
+        bottom: (isBig ? 60 : isSmall ? 15 : 50),
+        // width: 50,
+        // height: 50,
         borderRadius: 25,
         alignSelf: 'center',
         backgroundColor: 'white',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        paddingVertical: 10,
+        paddingHorizontal: 15
         // shadowColor: "#000",
         // shadowOffset: {
         //     width: 0,
