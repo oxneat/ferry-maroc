@@ -128,6 +128,17 @@ export default function WebViewScreen() {
                     document.querySelector('#recevoirDevis').remove()
                 }
 
+                // if (document.querySelector('.backToBoutiqueButton') != null {
+                //     document.querySelector('.backToBoutiqueButton').addEventListener('click',()=>{
+                //         document.querySelector('.backToBoutiqueButton').addEventListener('click',()=>{
+                //             window.ReactNativeWebView.postMessage(JSON.stringify({
+                //                 type:'back',
+                //             }))
+                //         })
+                //     })    
+                // }
+                
+
                 document.querySelector('#main-header').remove()
                 document.querySelector('.row.main-footer-sub').remove()
                 document.querySelector('.row.main-footer-sub').remove()
@@ -390,7 +401,10 @@ export default function WebViewScreen() {
 
                             setTimeout(() => {
                                 setIsEmpty(1)
-                            }, 4000);
+                            }, 5000);
+                        }
+                        else if (tmpData.type == 'back') {
+                            navigation.goBack();
                         } else {
                             console.log('-----------------Timed Out-------------------')
                             console.log(tmpData)

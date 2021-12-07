@@ -1,5 +1,5 @@
 // import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 
 import { useFonts } from 'expo-font';
 
@@ -10,8 +10,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 
 import { useNavigation, useRoute } from '@react-navigation/native';
-
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import BottomTabBar from './components/BottomTabBar';
 
@@ -26,6 +24,10 @@ import OtherScreens from './screens/OtherScreens';
 import AlertMessage from './components/AlertMessage';
 
 import { AlertContext } from './context/AlertManager';
+
+import NormalWebViewScreen from './screens/NormalWebViewScreen';
+
+import { Keyboard } from 'react-native';
 
 export default function Router() {
     let { showBottomTab } = useContext(TabStateContext);
@@ -64,9 +66,9 @@ export default function Router() {
         // <HeightSelectionScreen />
         // <WebViewScreen />
         <>
-            <StatusBar  style='dark' />
+            <StatusBar style='dark' />
             <Stack.Navigator>
-                <Stack.Screen name="home" options={{ headerShown: false }} component={HomeScreen} />
+                <Stack.Screen name="home" options={{ headerShown: false }} component={NormalWebViewScreen} />
                 {/* <Stack.Screen name={arr[0][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[0]} />} /> */}
                 <Stack.Screen name={arr[1][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[0]} />} />
                 <Stack.Screen name={arr[2][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[1]} />} />

@@ -1,12 +1,13 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { NavigationContext } from '@react-navigation/native';
 
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Keyboard } from 'react-native';
 
 import { Entypo, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
+
 import { TabStateContext } from '../context/TabManager';
 
 import Colors from '../helpers/Colors'

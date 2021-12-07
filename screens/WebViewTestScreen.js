@@ -6,7 +6,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { WebView } from 'react-native-webview';
 
 export default function WebViewTestScreen() {
-    let [url, setUrl] = useState('https://www.maroc-ferry.com/')
+    let [url, setUrl] = useState('http://www.parbateau.com/')
 
     useEffect(() => {
 
