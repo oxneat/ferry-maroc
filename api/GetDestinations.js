@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function getIds() {
-    let { data } = await axios.get('https://www.maroc-ferry.com/', {
+    let { data } = await axios.get('https://www.euromed-voyages.com/', {
         headers: {
             "Content-Type": "text/html",
             "Accept": "text/html"

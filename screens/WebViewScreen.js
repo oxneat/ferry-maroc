@@ -85,11 +85,11 @@ export default function WebViewScreen() {
 
     const [pricePopUp, setPricePopUp] = useState('');
 
-    useEffect(() => {
-        console.log("--------------Total--------------")
-        console.log(Total)
-        console.log("--------------Total--------------")
-    }, [Total])
+    // useEffect(() => {
+    //     console.log("--------------Total--------------")
+    //     console.log(Total)
+    //     console.log("--------------Total--------------")
+    // }, [Total])
 
     return (
         <View style={styles.wrpr}>
@@ -240,25 +240,6 @@ export default function WebViewScreen() {
                             let tmpKeys = Array.from(item.nextElementSibling.children[0].querySelector('table>thead>tr').children).map((itemo) => itemo.innerText)
                             let tp_det = []
                             Array.from(tmpLst).forEach(trIt => {
-                                    let tmpDetail = {}
-                                    // Array.from(trIt.children).forEach((tdIt, index) => {
-                                    //     if (index == 0) {
-                                    //         tmpDetail.title = tdIt.innerText
-                                    //     }
-                                    //     if (tdIt.className.includes('r-cache')) {
-                                    //         tmpDetail[tmpKeys[index]] = tdIt.children.length
-                                    //     }
-                    
-                                    //     if (trIt.children.length - 2 == index) {
-                                    //         tmpDetail.price = tdIt.querySelector('h5').innerText
-                                    //         if(!trIt.className.includes('hidden')){
-                                    //             let tmp = trIt.querySelector('select')
-                                    //             tmpDetail.max=tmp.children[tmp.children.length-1].innerText
-                                    //         }
-                                    //         tp_det.push(tmpDetail);
-                                    //     }
-                                    // })
-
                                     if(!trIt.className.includes('hidden')){
                                         tp_det.push({title:${Platform.OS == 'ios'} == true ? trIt.querySelectorAll('td')[0].innerHTML: trIt.querySelectorAll('td')[0].innerText,capacity:trIt.querySelectorAll('td')[1].children.length,bed:trIt.querySelectorAll('td')[2].children[0].attributes["data-original-title"].value,win:trIt.querySelectorAll('td')[3].children.length,swr:trIt.querySelectorAll('td')[4].children.length,wc:trIt.querySelectorAll('td')[5].children.length,max:trIt.querySelectorAll('td')[6].children[0].children[trIt.querySelectorAll('td')[6].children[0].children.length-1].innerText,price: ${Platform.OS == 'ios'} == true ? trIt.querySelectorAll('td')[7].innerHTML : trIt.querySelectorAll('td')[7].innerText})
                                     }
@@ -414,7 +395,7 @@ export default function WebViewScreen() {
                     }} />}
             </View>
 
-            {!removeContent && <View style={{ backgroundColor: '#414780', height: '100%', flex: 1, position: 'relative', bottom: 0 }}>
+            {/* {!removeContent && <View style={{ backgroundColor: '#414780', height: '100%', flex: 1, position: 'relative', bottom: 0 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 10, paddingHorizontal: 20 }}>
                     <Text style={{ fontFamily: 'Gilroy-Heavy', color: Colors.main, fontSize: 20 }}>
                         Prix Total :
@@ -547,7 +528,7 @@ export default function WebViewScreen() {
             }} style={styles.submitBtn}>
                 <Text style={{ fontFamily: 'Gilroy-Bold', marginRight: 10 }}>Continuer</Text>
                 {!loading ? <Ionicons name="arrow-forward" size={24} color="black" /> : <ActivityIndicator color='black' size={24} />}
-            </TouchableOpacity>}
+            </TouchableOpacity>} */}
         </View>
     )
 }

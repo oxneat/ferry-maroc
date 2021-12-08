@@ -1,4 +1,4 @@
-export const mainEndPoint = 'https://www.maroc-ferry.com'
+export const mainEndPoint = 'https://www.euromed-voyages.com'
 
 // results.forEach((item)=>{
 //     let tmpLst = item.nextElementSibling.children[0].querySelector('table>tbody').querySelectorAll('tr')

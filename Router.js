@@ -62,13 +62,11 @@ export default function Router() {
     // }, [route.name])
 
     return (
-        // <ReservationScreen />
-        // <HeightSelectionScreen />
-        // <WebViewScreen />
+
         <>
             <StatusBar style='dark' />
             <Stack.Navigator>
-                <Stack.Screen name="home" options={{ headerShown: false }} component={NormalWebViewScreen} />
+                <Stack.Screen name="home" options={{ headerShown: false }} component={HomeScreen} />
                 {/* <Stack.Screen name={arr[0][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[0]} />} /> */}
                 <Stack.Screen name={arr[1][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[0]} />} />
                 <Stack.Screen name={arr[2][3]} options={{ headerShown: false }} children={() => <OtherScreens endPoint={routes[1]} />} />

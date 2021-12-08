@@ -31,7 +31,7 @@ let months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 
 
 let getMonthsNeeded = () => {
     let tmpArr = []
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 12; i++) {
         let currentDate = dayjs().add(i, 'month');
         let month = currentDate.format('MM');
         let year = currentDate.format('YYYY')
