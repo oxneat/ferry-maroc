@@ -1,15 +1,9 @@
 // import { StatusBar } from 'expo-status-bar';
 import React, { useContext } from 'react';
 
-import { useFonts } from 'expo-font';
-
-import AppLoading from 'expo-app-loading';
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { StatusBar } from 'expo-status-bar';
-
-import { useNavigation, useRoute } from '@react-navigation/native';
 
 import BottomTabBar from './components/BottomTabBar';
 
@@ -25,31 +19,10 @@ import AlertMessage from './components/AlertMessage';
 
 import { AlertContext } from './context/AlertManager';
 
-import NormalWebViewScreen from './screens/NormalWebViewScreen';
-
-import { Keyboard } from 'react-native';
-
 export default function Router() {
     let { showBottomTab } = useContext(TabStateContext);
 
     const { alert } = useContext(AlertContext);
-
-    let route = useRoute();
-
-    let [loaded, error] = useFonts({
-        "Gilroy-Regular": require('./assets/fonts/Gilroy-Regular.ttf'),
-        "Gilroy-Bold": require('./assets/fonts/Gilroy-Bold.ttf'),
-        "Gilroy-Medium": require('./assets/fonts/Gilroy-Medium.ttf'),
-        "Gilroy-Thin": require('./assets/fonts/Gilroy-Thin.ttf'),
-        "Gilroy-Heavy": require('./assets/fonts/Gilroy-Heavy.ttf'),
-        "Gilroy-SemiBold": require('./assets/fonts/Gilroy-SemiBold.ttf'),
-    })
-
-    let navigation = useNavigation();
-
-    if (!loaded || error) {
-        return <AppLoading />
-    }
 
     const Stack = createNativeStackNavigator();
 

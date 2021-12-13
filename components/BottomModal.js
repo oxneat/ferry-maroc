@@ -5,7 +5,9 @@ import { Entypo } from '@expo/vector-icons';
 
 import Constants from 'expo-constants';
 
-let { height, width } = Dimensions.get('window');
+let { height } = Dimensions.get('window');
+
+import { isSmall } from '../helpers/Dimension';
 
 export default function BottomModal({ onPress, children, secBtn, onPresso, bottom = 60 }) {
     // useEffect(() => {
@@ -15,16 +17,16 @@ export default function BottomModal({ onPress, children, secBtn, onPresso, botto
     // }, [])
 
     return (
-        <View style={{ backgroundColor: 'rgba(0,0,0,0.5)', height: '100%', width: '100%', position: 'absolute', zIndex: 6, bottom: bottom }} >
-            <View style={{ position: 'absolute', width: '100%', backgroundColor: 'white', bottom: 0, paddingTop: 10, paddingHorizontal: 20 }}>
-                <View style={{ maxHeight: (height - Constants.statusBarHeight) * (parseFloat(parseFloat(height / width).toFixed(2)) <= 1.78 ? 0.6 : 0.8), backgroundColor: 'white', width: '100%', }}>
+        <View style={[styles.container, { bottom: bottom }]} >
+            <View style={styles.cntnt_wpr}>
+                <View style={styles.cntnt_wpr_wrpr}>
                     <ScrollView showsVerticalScrollIndicator={false} >
                         {
                             children
                         }
                     </ScrollView>
                 </View>
-                <View style={{ width: '100%', alignItems: 'center', justifyContent: 'center', paddingVertical: 5, backgroundColor: 'white' }}>
+                <View style={styles.mdl_ctrlr}>
                     <View style={{ flexDirection: 'row', alignSelf: 'center' }} >
                         <TouchableOpacity onPress={onPress} style={styles.cls_btn} >
                             <Entypo name="cross" size={24} color="black" />
@@ -57,5 +59,35 @@ let styles = StyleSheet.create({
         shadowRadius: 4.65,
 
         elevation: 6,
+    },
+    cntnt_wpr: {
+        position: 'absolute',
+        width: '100%',
+        backgroundColor: 'white',
+        bottom: 0,
+        paddingTop: 20,
+        paddingHorizontal: 20,
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        overflow: 'hidden'
+    },
+    cntnt_wpr_wrpr: {
+        maxHeight: (height - Constants.statusBarHeight) * (isSmall ? 0.6 : 0.8),
+        backgroundColor: 'white',
+        width: '100%'
+    },
+    mdl_ctrlr: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 5,
+        backgroundColor: 'white'
+    },
+    container: {
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        height: '100%',
+        width: '100%',
+        position: 'absolute',
+        zIndex: 6
     }
 })

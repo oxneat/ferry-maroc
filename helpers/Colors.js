@@ -1,3 +1,3 @@
 export default {
-    main: '#ff9300'
+    main: '#f7c700'
 }

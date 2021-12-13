@@ -1,1 +1,1 @@
-export const routes = ['routes-ferry-Maroc', 'page/nos-agences', 'page/Besoin-daide', 'contactF']
+export const routes = ['traversees-ferry-maroc', 'page/nos-agences', 'page/Besoin-daide', 'contactF']

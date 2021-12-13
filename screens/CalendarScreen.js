@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 
 import Constants from 'expo-constants';
@@ -31,7 +31,7 @@ let months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 
 
 let getMonthsNeeded = () => {
     let tmpArr = []
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 8; i++) {
         let currentDate = dayjs().add(i, 'month');
         let month = currentDate.format('MM');
         let year = currentDate.format('YYYY')
@@ -40,6 +40,13 @@ let getMonthsNeeded = () => {
         tmpArr.push({ title: `${months[parseInt(month) - 1]} ${year}`, length: numDays, month: currentDate.format('MM'), year })
     }
     return tmpArr
+}
+
+let getPresentDates = (dates) => {
+    let currentDate = dayjs().format('DD/MM/YYYY')
+    return dates.filter((date) => {
+        return CompareDates(date, currentDate, '>=')
+    })
 }
 
 export default function CalendarScreen() {
@@ -70,6 +77,10 @@ export default function CalendarScreen() {
             });
 
             setDates(realDates)
+
+            // console.log('----------------realDates----------------')
+            // console.log(getPresentDates(realDates))
+            // console.log('----------------realDates----------------')
         }
     }, []);
 
@@ -78,6 +89,40 @@ export default function CalendarScreen() {
     useEffect(() => {
         setShowBottomTab(false);
     }, [isFocused])
+
+    useEffect(() => {
+        // console.log('-----------------------params-----------------------')
+        // console.log(params)
+        // console.log('-----------------------params-----------------------')
+        const unsubscribe = navigation.addListener('focus', () => {
+            if (params.selected.length > 0 && params.type == 'go') {
+                let date1 = dayjs(`${params.selected[0].split('/')[2]}-${params.selected[0].split('/')[1]}-01`)
+                // date1.diff(dayjs(), 'month')
+
+                // console.log()
+                // console.log('----------Number Of Steps----------')
+
+                let steps = date1.diff(dayjs(dayjs().format('YYYY-MM').toString() + '-01'), 'months');
+
+
+                let tmpHeight = (width / 6) * 6
+
+
+                console.log('----------Number Of Steps----------')
+                // console.log()
+
+                // if (scrollRef) {
+                scrollRef.current.scrollTo({ x: 0, y: steps * tmpHeight, animated: true })
+                // }
+                console.log('----------Number Of Steps----------')
+            }
+        });
+
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        return unsubscribe;
+    }, [navigation])
+
+    const scrollRef = useRef();
 
     return (
         <View style={styles.wrpr}>
@@ -90,57 +135,67 @@ export default function CalendarScreen() {
                     <AntDesign name="check" size={24} color="black" />
                 </TouchableOpacity>
             </TopBar>
-            <ScrollView>
+            <ScrollView ref={scrollRef}>
                 {
-                    getMonthsNeeded().map((itemParent, indexParent) => (
-                        <View key={indexParent + ' in par cal'}>
-                            <View style={styles.title_mth}>
-                                <Text style={[styles.txt_reg, { textTransform: 'capitalize' }]}>{itemParent.title}</Text>
-                            </View>
-                            <View style={styles.rw_wrp}>
-                                {
-                                    getDays(itemParent.length).map((item, index) => {
-                                        let itemDate = `${item}/${itemParent.month}/${itemParent.year}`;
-                                        let isValidDate = CompareDates(itemDate, dayjs().format('DD/MM/YYYY'), '>=') && (dates.length > 0 && dates.includes(itemDate));
+                    getMonthsNeeded().map((itemParent, indexParent) => {
+                        // console.log('-----------------Month Needed-----------------------')
+                        // console.log(itemParent)
+                        // console.log('-----------------Month Needed-----------------------')
 
-                                        return (
-                                            <TouchableOpacity onPress={() => {
-                                                let tmpSelDa = [...selectedDates];
+                        if (params.type != 'go' && params.selected.length > 0 && CompareDates(`01/${itemParent.month}/${itemParent.year}`, `01/${params.selected[0].split('/')[1]}/${params.selected[0].split('/')[2]}`, '<')) {
+                            return;
+                        } else {
+                            return (
+                                <View key={indexParent + ' in par cal'}>
+                                    <View style={styles.title_mth}>
+                                        <Text style={[styles.txt_reg, { textTransform: 'capitalize', color: 'white' }]}>{itemParent.title}</Text>
+                                    </View>
+                                    <View style={styles.rw_wrp}>
+                                        {
+                                            getDays(itemParent.length).map((item, index) => {
+                                                let itemDate = `${item}/${itemParent.month}/${itemParent.year}`;
+                                                let isValidDate = CompareDates(itemDate, dayjs().format('DD/MM/YYYY'), '>=') && (dates.length > 0 && dates.includes(itemDate));
 
-                                                if (params.type == 'go') {
-                                                    tmpSelDa = [itemDate]
-                                                } else {
-                                                    if (tmpSelDa.length === 0) {
-                                                        tmpSelDa.push(itemDate);
-                                                    } else if (tmpSelDa.length === 1 && CompareDates(itemDate, tmpSelDa[0], '>')) {
-                                                        tmpSelDa.push(itemDate)
-                                                    } else if (tmpSelDa.length === 2) {
-                                                        if (CompareDates(itemDate, tmpSelDa[0], '>')) {
-                                                            tmpSelDa[1] = itemDate;
-                                                        } else if (CompareDates(itemDate, tmpSelDa[0], '<')) {
+                                                return (
+                                                    <TouchableOpacity onPress={() => {
+                                                        let tmpSelDa = [...selectedDates];
+
+                                                        if (params.type == 'go') {
                                                             tmpSelDa = [itemDate]
-                                                        } else if (CompareDates(itemDate, tmpSelDa[0], '=')) {
-                                                            tmpSelDa = [itemDate]
+                                                        } else {
+                                                            if (tmpSelDa.length === 0) {
+                                                                tmpSelDa.push(itemDate);
+                                                            } else if (tmpSelDa.length === 1 && CompareDates(itemDate, tmpSelDa[0], '>')) {
+                                                                tmpSelDa.push(itemDate)
+                                                            } else if (tmpSelDa.length === 2) {
+                                                                if (CompareDates(itemDate, tmpSelDa[0], '>')) {
+                                                                    tmpSelDa[1] = itemDate;
+                                                                } else if (CompareDates(itemDate, tmpSelDa[0], '<')) {
+                                                                    tmpSelDa = [itemDate]
+                                                                } else if (CompareDates(itemDate, tmpSelDa[0], '=')) {
+                                                                    tmpSelDa = [itemDate]
+                                                                }
+                                                            }
                                                         }
-                                                    }
-                                                }
 
-                                                setSelectedDates(tmpSelDa)
-                                            }} disabled={!isValidDate} key={index + ' it sin_it'} style={[styles.sin_it, { backgroundColor: selectedDates.length == 0 ? 'white' : selectedDates.length == 1 ? CompareDates(itemDate, selectedDates[0], '=') ? '#fcba03' : 'white' : selectedDates.length == 2 && isBetween(selectedDates[0], selectedDates[1], itemDate) ? '#fcba03' : 'white' }]}>
-                                                <Text style={[styles.txt_bol, { color: isValidDate ? 'black' : '#cfcfcf' }]}>
-                                                    {
-                                                        item
-                                                    }
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )
-                                    }
-                                    )
-                                }
+                                                        setSelectedDates(tmpSelDa)
+                                                    }} disabled={!isValidDate} key={index + ' it sin_it'} style={[styles.sin_it, { backgroundColor: selectedDates.length == 0 ? 'white' : selectedDates.length == 1 ? CompareDates(itemDate, selectedDates[0], '=') ? '#fcba03' : 'white' : selectedDates.length == 2 && isBetween(selectedDates[0], selectedDates[1], itemDate) ? '#fcba03' : 'white' }]}>
+                                                        <Text style={[styles.txt_bol, { color: isValidDate ? 'black' : '#cfcfcf' }]}>
+                                                            {
+                                                                item
+                                                            }
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            }
+                                            )
+                                        }
 
-                            </View>
-                        </View>
-                    ))
+                                    </View>
+                                </View>
+                            )
+                        }
+                    })
                 }
             </ScrollView>
             {/* <View style={styles.ok_wrpr}>
@@ -170,9 +225,10 @@ const styles = StyleSheet.create({
         height: width / 6,
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: 10
     },
     title_mth: {
-        backgroundColor: Colors.main,
+        backgroundColor: '#084212',
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 5

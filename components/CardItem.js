@@ -1,13 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 
 import SelectionControls from '../components/SelectionControls';
 
 import Colors from '../helpers/Colors';
 
-export default function CardItem({ title, price, onChange, value, swr, wc, win, capacity, bed }) {
+export default function CardItem({ title, price, onChange, value, swr, wc, capacity }) {
     return (
         <View style={styles.wrapper}>
             <View style={[styles.row, { alignItems: 'center' }]}>
@@ -32,35 +32,25 @@ export default function CardItem({ title, price, onChange, value, swr, wc, win, 
             </View>
             <View style={[styles.row, { marginTop: 10, borderBottomWidth: 1, borderBottomColor: 'gray', paddingBottom: 10 }]}>
                 <View style={styles.flx}>
-                    <Text style={styles.font_reg}>Capacité</Text>
+                    <Text style={styles.font_reg}>Disponible</Text>
                 </View>
-                <View style={[styles.flx, styles.m_1]}>
-                    <Text style={styles.font_reg}>Lits</Text>
-                </View>
-                <View style={styles.flx}>
-                    <Text style={styles.font_reg}>Fenêtre</Text>
-                </View>
-                <View style={styles.flx}>
+                <View style={[styles.flx, styles.m_1, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+                    <MaterialCommunityIcons name="shower-head" size={18} color="black" />
                     <Text style={styles.font_reg}>Douche</Text>
                 </View>
-                <View style={styles.flx}>
-                    <Text style={styles.font_reg}>Sanitaire</Text>
+                <View style={[styles.flx, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}>
+                    <MaterialCommunityIcons name="toilet" size={18} color="black" />
+                    <Text style={styles.font_reg}>Wc</Text>
                 </View>
             </View>
             <View style={[styles.row, { marginTop: 10 }]}>
                 <View style={styles.flx}>
                     <Text style={styles.font_reg}>{capacity}</Text>
                 </View>
-                <View style={[styles.flx, styles.m_1]}>
-                    <Text style={styles.font_reg}>{bed}</Text>
-                </View>
-                <View style={styles.flx}>
-                    {win ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
-                </View>
-                <View style={styles.flx}>
+                <View style={[styles.flx, { alignItems: 'center', justifyContent: 'center' }]}>
                     {swr ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
                 </View>
-                <View style={styles.flx}>
+                <View style={[styles.flx, { alignItems: 'center', justifyContent: 'center' }]}>
                     {wc ? <Entypo name="check" size={15} color="green" /> : <Entypo name="cross" size={15} color="red" />}
                 </View>
             </View>

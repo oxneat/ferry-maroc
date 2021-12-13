@@ -30,7 +30,7 @@ import Constants from 'expo-constants';
 
 import { AlertContext } from '../context/AlertManager';
 
-import { isBig } from '../helpers/Dimension';
+import { isBig, isSmall } from '../helpers/Dimension';
 
 let imgs = ['https://www.ferrymaroc.com/easybook/images/bg/gnv.webp', 'https://www.ferrymaroc.com/easybook/images/bg/13.webp', 'https://www.ferrymaroc.com/easybook/images/bg/4.jpg']
 
@@ -191,13 +191,15 @@ export default function ReservationScreen() {
         <View style={styles.container} >
             <ImageBackground source={{ uri: imgs[page] }} style={[styles.fi_sc, { height: isBig ? 400 : 'auto' }]} >
                 <View style={{ position: 'absolute', width: '1000%', height: '1000%', backgroundColor: 'rgba(0,0,0,0.3)', flex: 1 }} />
-                <View style={{ alignItems: 'center', justifyContent: 'center' }} >
+                <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 10 }} >
                     <View style={{ ...styles.rw, alignItems: 'flex-end' }} >
-                        <AntDesign name="star" size={12 * (isBig ? 2 : 1)} color="#e3e3e3" />
-                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color="#ff9300" />
-                        <AntDesign name="star" size={12 * (isBig ? 2 : 1)} color="#e3e3e3" />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color={Colors.main} />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color={Colors.main} />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color={Colors.main} />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color={Colors.main} />
+                        <AntDesign name="star" size={15 * (isBig ? 2 : 1)} color={Colors.main} />
                     </View>
-                    <Image resizeMode='contain' style={{ width: 220 * (isBig ? 2 : 1), height: 50 * (isBig ? 2 : 1) }} source={require('../assets/images/logo.png')} />
+                    <Image resizeMode='contain' style={{ width: 220 * (isBig ? 2 : 1), height: 60 * (isBig ? 2 : 1) }} source={require('../assets/images/logo.png')} />
                 </View>
                 {/* <Text style={{ fontFamily: 'Gilroy-Heavy', fontSize: 30, marginBottom: 30, ...styles.white, textAlign: 'center' }} >
                     Réservez votre voyage
@@ -263,12 +265,14 @@ export default function ReservationScreen() {
                 <View style={{ ...styles.rw, marginTop: 10 }} >
                     <View style={{ flex: 1 }} >
                         <Text style={{ fontFamily: 'Gilroy-Bold', marginBottom: 5 }} >
-                            Départ
+                            Aller
                         </Text>
                         <TouchableOpacity onPress={() => {
                             if (agesConstraints) {
                                 navigation.navigate('calendar', { dates: datesAvailable["aller"], type: 'go', selected: selectedDates })
                             }
+
+                            // console.log(datesAvailable)
                         }} style={{ borderWidth: 1, borderColor: '#c7c7c7', borderRadius: 10, ...styles.rw, padding: 10 }} >
                             <AntDesign size={20} style={{ marginRight: 10 }} color="gray" name="calendar" />
                             <Text style={{ fontFamily: 'Gilroy-SemiBold' }} >
@@ -578,7 +582,9 @@ export default function ReservationScreen() {
                         let nbPassengers = 0
 
                         Object.keys(tmpSH1).forEach((key) => {
-                            nbPassengers += tmpSH1[key]
+                            if (key != 'nb_bebes' && key != 'nb_chats' && key != 'nb_chiens') {
+                                nbPassengers += tmpSH1[key]
+                            }
                         })
 
                         navigation.navigate('search', { dest1: destinations[selectedDest[0]].data[selectedDest[1]][0], dest2: destinations[selectedDest1[0]].data[selectedDest1[1]][0], selectedDates, passengers: summedStr1, vehicles: summedStr, obj_ve_pass: { ...tmpSH1, ...tmpSH }, nbPassengers })
@@ -639,9 +645,9 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: Colors.main,
         position: 'absolute',
-        bottom: 70,
+        bottom:isSmall ? 65 : 70,
         width: 50,
-        height: 50,
+        height:isSmall ? 42 : 50,
         borderRadius: 50 / 2,
         alignItems: 'center',
         justifyContent: 'center',
