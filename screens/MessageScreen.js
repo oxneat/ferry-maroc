@@ -8,9 +8,11 @@ import Colors from '../helpers/Colors';
 import { AntDesign } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
-import { isSmall } from '../helpers/Dimension';
+import { isSmall, isBig } from '../helpers/Dimension';
 
 let { width } = Dimensions.get('window')
+
+import * as Linking from 'expo-linking';
 
 let title = "NOUS VOUS INFORMONS QU'IL EST POSSIBLE DE VOYAGER DEPUIS SÈTE (FRANCE) OU GÊNES ( ITALIE) À DETINATION DU MAROC ; NOUS VOUS RAPPELONS QUE LES DÉPLACEMENTS SONT SOUMIS AUX LIMITATIONS FIXÉES PAR LE GOUVERNEMENT MAROCAIN :"
 
@@ -28,26 +30,35 @@ export default function MessageScreen() {
                 <Image resizeMode='contain' style={{ width: '100%', height: '100%' }} source={require('../assets/images/curve3.png')} />
             </View>
 
-            <View style={{ paddingTop: Constants.statusBarHeight, flex: 1, width: '100%', height: '100%', justifyContent: 'flex-end', paddingBottom: isSmall ? 80 : 150 }} >
+            <View style={{ paddingTop: Constants.statusBarHeight, flex: 1, width: '100%', height: '100%', justifyContent: 'flex-end', paddingBottom: isSmall ? 80 : isBig ? 200 : 150, paddingHorizontal: isBig ? 50 : 0 }} >
                 <View style={{ flexDirection: showTheRest ? 'column' : 'row', alignItems: showTheRest ? 'flex-start' : 'center', marginBottom: 15 }}>
                     <View>
-                        <Text style={[styles.txt, styles.txt_tw, { marginBottom: 0 }]} >
-                            {!showTheRest ? `${title.split(' ')[0]} ${title.split(' ')[1]} ${title.split(' ')[2]} ... ` : title}
+                        <Text style={[styles.txt, styles.txt_tw, { marginBottom: 0, fontSize: isBig ? 20 : 15, lineHeight: isBig ? 40 : 20 }]} >
+                            {!showTheRest && !isBig ? `${title.split(' ')[0]} ${title.split(' ')[1]} ${title.split(' ')[2]} ... ` : title}
                         </Text>
                     </View>
-                    <TouchableOpacity onPress={() => {
+                    {!isBig && <TouchableOpacity onPress={() => {
                         setShowTheRest(!showTheRest)
                     }}>
                         <Text style={{ fontFamily: 'Gilroy-Bold', fontSize: 13, color: 'gray' }}>
                             {showTheRest ? 'Reduire' : 'Lire la suite'}
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </View>
-                <Text style={[styles.txt, { fontSize: 12 }]} >1 - PRÉSENTATION D'UN TEST PCR COVID-19 NÉGATIF (DATANT DE MOINS DE 72 HEURES DE L’ARRIVÉE AU MAROC)</Text>
-                <Text style={[styles.txt, { fontSize: 12 }]} >2 - LES ENFANTS DE MOINS DE 11 ANS SONT DISPENSÉS DU TEST PCR.</Text>
-                <Text style={[styles.txt, styles.txt_th, { marginTop: 10 }, { fontSize: 12 }]} >
-                    NOUS VOUS INVITONS À DEMANDER À VOS CLIENTS DE SE RAPPROCHER DU CONSULAT DU MAROC LE PLUS PROCHE POUR SE FAIRE CONFIRMER LES CONDITIONS D'ENTRÉES AU MAROC.<Text style={styles.txt_spec}>Https://Www.Diplomatie.Gouv.Fr/Fr/Conseils-Aux-Voyageurs/Conseils-Par-Pays-Destination/Maroc/</Text> OU AU <Text style={styles.txt_spec}>+212 5 37 68 97 00</Text>
+                <Text style={[styles.txt, { fontSize: isBig ? 15 : 12 }]} >1 - PRÉSENTATION D'UN TEST PCR COVID-19 NÉGATIF (DATANT DE MOINS DE 72 HEURES DE L’ARRIVÉE AU MAROC)</Text>
+                <Text style={[styles.txt, { fontSize: isBig ? 15 : 12 }]} >2 - LES ENFANTS DE MOINS DE 11 ANS SONT DISPENSÉS DU TEST PCR.</Text>
+                <Text style={[styles.txt, styles.txt_th, { marginTop: 10 }, { fontSize: isBig ? 15 : 12 }]} >
+                    NOUS VOUS INVITONS À DEMANDER À VOS CLIENTS DE SE RAPPROCHER DU CONSULAT DU MAROC LE PLUS PROCHE POUR SE FAIRE CONFIRMER LES CONDITIONS D'ENTRÉES AU MAROC.
                 </Text>
+                <TouchableOpacity onPress={() => Linking.openURL('Https://Www.Diplomatie.Gouv.Fr/Fr/Conseils-Aux-Voyageurs/Conseils-Par-Pays-Destination/Maroc/')}>
+                    <Text style={[styles.txt_spec, { fontFamily: 'Gilroy-Medium', fontSize: isBig ? 15 : 12 }]}>Https://Www.Diplomatie.Gouv.Fr/Fr/Conseils-Aux-Voyageurs/Conseils-Par-Pays-Destination/Maroc/</Text>
+                </TouchableOpacity>
+                <Text style={{ color: 'black', fontFamily: 'Gilroy-Bold', marginVertical: 5, fontSize: 10 }}>
+                    OU AU
+                </Text>
+                <TouchableOpacity onPress={() => Linking.openURL('tel:+212537689700')}>
+                    <Text style={[styles.txt_spec, { fontFamily: 'Gilroy-Medium', fontSize: isBig ? 15 : 12 }]}>+212 5 37 68 97 00</Text>
+                </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => {
                 navigation.navigate('hm');

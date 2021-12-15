@@ -48,22 +48,28 @@ export default function OtherScreens({ endPoint }) {
             }} style={{ fontFamily: 'Gilroy-Bold' }} source={{
                 uri: `https://www.euromed-voyages.com/${endPoint}`
             }} injectedJavaScript={`
-                let ele = document.createElement('script')
-                ele.src = "https://code.jquery.com/jquery-3.6.0.min.js"
-                ele.integrity = "sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-                ele.crossOrigin = "anonymous"
-                document.body.appendChild(ele)
+                // let ele = document.createElement('script')
+                // ele.src = "https://code.jquery.com/jquery-3.6.0.min.js"
+                // ele.integrity = "sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+                // ele.crossOrigin = "anonymous"
+                // document.body.appendChild(ele)
 
-                document.querySelectorAll('iframe').forEach((it,ind)=>{
-                    if(it.id == 'launcher'){
-
-                        // window.ReactNativeWebView.postMessage(JSON.stringify({type:'Clicked Chat',ele:JSON.stringify(it.id)}));
-                        it.contentDocument.querySelector('button').addEventListener('click',()=>{
-                            window.ReactNativeWebView.postMessage(JSON.stringify({type:'Clicked Chat worked'}));
-                        })
-                        // ($(it).contents()[0].querySelector('button[aria-label="Chat"]')
-                    }
+                // if(document.querySelectorAll('iframe').length > 0){
+                document.querySelectorAll('iframe').forEach((it)=>{
+                    it.remove()
                 })
+                // }
+
+                // document.querySelectorAll('iframe').forEach((it,ind)=>{
+                //     if(it.id == 'launcher'){
+
+                //         // window.ReactNativeWebView.postMessage(JSON.stringify({type:'Clicked Chat',ele:JSON.stringify(it.id)}));
+                //         it.contentDocument.querySelector('button').addEventListener('click',()=>{
+                //             window.ReactNativeWebView.postMessage(JSON.stringify({type:'Clicked Chat worked'}));
+                //         })
+                //         // ($(it).contents()[0].querySelector('button[aria-label="Chat"]')
+                //     }
+                // })
 
                 if(document.querySelector('.btn-easy.float-btn.color2-bg') != null){
                     document.querySelector('.btn-easy.float-btn.color2-bg').addEventListener('click',(e)=>{
@@ -77,12 +83,6 @@ export default function OtherScreens({ endPoint }) {
                 //         if (document.querySelector('.sc-xszt60-1.jTnFlH') != null) {
                 //             document.querySelector('.sc-xszt60-1.jTnFlH').children[1].remove()
                 //         }
-                //     })
-                // }
-
-                // if(document.querySelectorAll('iframe').length > 0){
-                //     document.querySelectorAll('iframe').forEach((it)=>{
-                //         it.remove()
                 //     })
                 // }
 

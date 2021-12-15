@@ -313,6 +313,25 @@ export default function NormalWebViewScreen() {
             }} />
             <View style={styles.wv}>
                 {injectedJs.length > 0 && <WebView ref={webViewRef} style={{ fontFamily: 'Gilroy-Bold' }} injectedJavaScript={`
+                window.alert = function() {};
+
+                if (document.querySelector('#telephone') != null) {
+                    document.querySelector('#telephone').value = "0621325465"
+    
+                    document.querySelectorAll('input').forEach((it)=>{
+                        if(it.id.includes('nom')){
+                            it.value = "nOM"
+                        }
+                    })
+                }
+
+                if(document.querySelector('#myModal') != null){
+                    document.querySelector('#myModal').remove()
+                }
+
+                // if (document.querySelector('#recevoirDevis') != null) {
+                //     document.querySelector('#recevoirDevis').remove()
+                // }
 
                 if(document.querySelectorAll('iframe').length > 0){
                     document.querySelectorAll('iframe').forEach((it)=>{
@@ -320,15 +339,15 @@ export default function NormalWebViewScreen() {
                     })
                 }
                 
-                (function() {
-                    var _old_alert = window.alert;
-                    window.alert = function() {
-                        _old_alert.apply(window,arguments);
-                        window.ReactNativeWebView.postMessage(JSON.stringify({
-                            type: 'backToSchool',
-                        }))
-                    };
-                })();
+                // (function() {
+                //     var _old_alert = window.alert;
+                //     window.alert = function() {
+                //         _old_alert.apply(window,arguments);
+                //         window.ReactNativeWebView.postMessage(JSON.stringify({
+                //             type: 'backToSchool',
+                //         }))
+                //     };
+                // })();
 
                 if(document.querySelector('#steps') != null){
                     document.querySelector('#steps').remove()
@@ -406,7 +425,7 @@ export default function NormalWebViewScreen() {
                                         return (
                                             <ResultCard total={Total[index]} onMore={() => {
                                                 setSelectedResult(index)
-                                                console.log(item)
+                                                // console.log(item)
                                             }} fullDate={`${item.fullDate.split('\n')[0]} ${item.fullDate.split('\n')[1]} ${item.fullDate.split('\n')[2]}`} key={index + ' rc'} fromCountry='MAR' toCountry='FRA' from={item.from} code={item.code_voyage} departureHour={item.tmpInterval[0].split('\n')[0]} arrivalHour={item.tmpInterval[1].split('\n')[0]} duration={item.estimatedTime.split('/n')[0].split('\n')[0] + ' ' + item.estimatedTime.split('/n')[0].split('\n')[1]} to={item.to} uri={item.img} />
                                         )
                                     })
@@ -423,7 +442,7 @@ export default function NormalWebViewScreen() {
                                 <View style={[styles.err_hd, { marginBottom: 0, alignItems: 'flex-start' }]}>
                                     <FontAwesome name="circle" style={{ marginTop: 5, marginRight: 5 }} size={8} color="red" />
                                     <Text style={{ color: 'black', fontFamily: 'Gilroy-Medium' }}>
-                                        Nous n'avons pas trouvé de recommendations pour votre recherche. Merci de réessayer en modifiant vos dates de vols.
+                                        Nous n'avons pas trouvé de recommendations pour votre recherche. Merci de réessayer en modifiant vos dates de traversées.
                                     </Text>
                                 </View>
                             </View>
@@ -437,25 +456,32 @@ export default function NormalWebViewScreen() {
                                     // console.log(selectedOptionsRoom)
                                     let tmpPrce = Platform.OS == 'ios' ? item.price.replace(/<[^>]*>?/gm, '').replaceAll('\n', '').replaceAll('  ', '') : item.price
 
-                                    // console.log("----------------- tmpPrce ----------------")
-                                    // console.log(parseFloat(tmpPrce.split(' ')[0]))
-                                    // console.log("----------------- tmpPrce ----------------")
+                                    // console.log("----------------- Value Changed ----------------")
+                                    // console.log()
+                                    // console.log("----------------- Value Changed ----------------")
+
+
+
 
                                     let nbCurrent = 0;
 
-                                    selectedOptionsRoom[selectedResult].forEach((it) => {
-                                        nbCurrent += it;
-                                    })
+                                    // console.log("----------------- Value Changed ----------------")
+                                    // console.log(totPassTmp)
+                                    // console.log("----------------- Value Changed ----------------")
 
                                     // console.log('-------------- valType --------------------')
                                     // console.log(valType)
                                     // console.log('-------------- valType --------------------')
 
+                                    selectedOptionsRoom[selectedResult].forEach((it) => {
+                                        nbCurrent += it;
+                                    })
+
                                     if (nbCurrent < params.nbPassengers || valType == 'minus') {
                                         if (value <= parseInt(item.max) && value >= 0) {
-                                            console.log('-------+++++++++++++---------------')
-                                            console.log(valType)
-                                            console.log('-------+++++++++++++---------------')
+                                            // console.log('-------+++++++++++++---------------')
+                                            // console.log(valType)
+                                            // console.log('-------+++++++++++++---------------')
                                             let tmpSel = [...selectedOptionsRoom]
                                             tmpSel[selectedResult][index] = value
                                             setSelectedOptionsRoom(tmpSel)
@@ -485,29 +511,71 @@ export default function NormalWebViewScreen() {
                     </BottomModal>}
                     {results.length > 0 && <TouchableOpacity onPress={() => {
 
-                        let areOptionsValid = selectedOptionsRoom.map(() => false);
+                        // let areOptionsValid = selectedOptionsRoom.map(() => false);
 
-                        selectedOptionsRoom.forEach((item, index) => {
-                            let tmpSum = 0;
+                        // selectedOptionsRoom.forEach((item, index) => {
+                        //     let tmpSum = 0;
 
-                            item.forEach((it) => {
-                                tmpSum += it
+                        //     item.forEach((it) => {
+                        //         tmpSum += it
+                        //     })
+
+                        //     if (tmpSum > 0) {
+                        //         areOptionsValid[index] = true
+                        //     }
+                        // })
+
+                        // let isValid = true
+
+                        // areOptionsValid.forEach((condition) => {
+                        //     if (!condition) {
+                        //         isValid = false
+                        //     }
+                        // })
+
+
+                        let totPassTmp = [0, 1];
+
+                        let tmRmCtnt = [[...selectedOptionsRoom[0]], [...selectedOptionsRoom[1]]]
+
+                        for (let j = 0; j < 2; j++) {
+
+                            for (let i = 0; i < selectedOptionsRoom[j].length; i++) {
+                                if (i > 0) {
+                                    let str = results[j].details[i].title;
+                                    let tmpInd = str.indexOf('lits') - 1 > -1 ? str.indexOf('lits') - 1 : str.indexOf('passagers') - 2 > -1 ? str.indexOf('passagers') - 2 : -1
+
+                                    if (tmpInd > -1) {
+                                        tmRmCtnt[j][i] = parseFloat(str[tmpInd]) * selectedOptionsRoom[j][i];
+                                    }
+                                }
+
+
+                                totPassTmp[j] += selectedOptionsRoom[j][i]
+                            }
+                        }
+
+
+                        console.log("------------------------ params.nbPassengers -------------------------------")
+                        // console.log(totPassTmp[0] == params.nbPassengers, totPassTmp[1] == params.nbPassengers)
+                        console.log(tmRmCtnt)
+                        console.log("------------------------ params.nbPassengers -------------------------------")
+
+                        let isValid = false;
+
+                        let sums = [0, 0];
+
+                        tmRmCtnt.forEach((constraintBlock, index) => {
+                            constraintBlock.forEach((cstrBlk) => {
+                                sums[index] += cstrBlk
                             })
-
-                            if (tmpSum > 0) {
-                                areOptionsValid[index] = true
-                            }
                         })
 
-                        let isValid = true
+                        console.log("------------------------------------- Sums -------------------------------------")
+                        console.log(sums)
+                        console.log("------------------------------------- Sums -------------------------------------")
 
-                        areOptionsValid.forEach((condition) => {
-                            if (!condition) {
-                                isValid = false
-                            }
-                        })
-
-                        if (isValid) {
+                        if (sums[0] == params.nbPassengers && sums[1] == params.nbPassengers) {
                             // setEndPoint('/resultats')
                             // setShowWebView(false)
                             // setTimeout(() => {
@@ -517,8 +585,27 @@ export default function NormalWebViewScreen() {
                             // setLoading(true);
                             setStep(2);
                             webViewRef.current.reload();
+                        } else if (sums[0] > params.nbPassengers && sums[1] > params.nbPassengers) {
+                            setAlert({ type: 'warn', msg: "le nombre d\'hébergements est supérieur au nombre de passagers (aller et retour)" })
+
+                            setTimeout(() => {
+                                setAlert({ type: '', msg: '' })
+                            }, 5000);
+                        } else if (sums[0] > params.nbPassengers) {
+                            setAlert({ type: 'warn', msg: "le nombre d\'hébergements est supérieur au nombre de passagers (aller)" })
+
+                            setTimeout(() => {
+                                setAlert({ type: '', msg: '' })
+                            }, 5000);
+                        } else if (sums[1] > params.nbPassengers) {
+                            setAlert({ type: 'warn', msg: "le nombre d\'hébergements est supérieur au nombre de passagers (retour)" })
+
+                            setTimeout(() => {
+                                setAlert({ type: '', msg: '' })
+                            }, 5000);
                         } else {
                             setAlert({ type: 'warn', msg: 'Toutes les options ne sont pas selectionnées' })
+
                             setTimeout(() => {
                                 setAlert({ type: '', msg: '' })
                             }, 5000);
