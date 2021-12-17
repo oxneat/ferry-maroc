@@ -17,6 +17,8 @@ import TopBar from '../components/TopBar';
 
 import { isSmall, isBig } from '../helpers/Dimension';
 
+let mainUrlStr = 'https://www.euromed-voyages.com/'
+
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 export default function NormalWebViewScreen() {
@@ -67,6 +69,34 @@ export default function NormalWebViewScreen() {
 
     const [removeContent, setRemoveContent] = useState(false);
 
+    const [strVida, setStrVida] = useState('');
+
+    const [showWeb, setShowWeb] = useState(true);
+
+    // document.querySelector('select[name=allee]').value = '${params.dest1}'
+    //             if (${params.selectedDates.length == 2} == true) {
+    //                 document.querySelector('select[name=port_retour]').value = '${params.dest2}'
+    //                 document.querySelector('input[name=date_retour]').value = '${params.selectedDates[1]}'
+    //                 document.querySelector('input[name=type_traversee]').value = 'ALLEE_RETOUR'
+    //             }else{
+    //                 document.querySelectorAll('input[name=typetraversee]')[1].click()
+    //                 document.querySelector('input[name=type_traversee]').value = 'ALLEE_SIMPLE'
+    //             }
+
+    //             document.querySelector('select[name=port_retour]').innerHTML = '<option value="${params.dest2}"></option>'
+    //             document.querySelector('input[name=date_allee]').value = '${params.selectedDates[0]}'
+
+    //             document.querySelector('input[name=passagers]').value = '${params.passengers}'
+    //             document.querySelector('input[name=vehicules]').value = '${params.vehicles}'
+
+    //             ${str}
+
+    //             let ele = document.createElement('div')
+
+    //             ele.innerHTML = '<input type="text" placeholder="Hauteur" name="vehicule_type[114][hauteur0]" value="2"> <input type="text" placeholder="Longeur" name="vehicule_type[114][largeur0]" value="5"><input type="hidden" name="code[114]" value="1">'
+
+    //             document.querySelector('#recherche_moteur').appendChild(ele)
+
     useEffect(() => {
         let tmpInjected = '';
 
@@ -77,35 +107,48 @@ export default function NormalWebViewScreen() {
             // console.log(it)
         })
 
-        console.log('------------------Effect Step------------------')
-        console.log(step)
-        console.log('------------------Effect Step------------------')
+        setStrVida(str)
+
+        // console.log('------------------Effect Step------------------')
+        // console.log(step)
+        // console.log('------------------Effect Step------------------')
 
         if (step == 0) {
             tmpInjected = `
-                document.querySelector('select[name=allee]').value = '${params.dest1}'
-                if (${params.selectedDates.length == 2} == true) {
-                    document.querySelector('select[name=port_retour]').value = '${params.dest2}'
-                    document.querySelector('input[name=date_retour]').value = '${params.selectedDates[1]}'
-                    document.querySelector('input[name=type_traversee]').value = 'ALLEE_RETOUR'
-                }else{
-                    document.querySelectorAll('input[name=typetraversee]')[1].click()
-                    document.querySelector('input[name=type_traversee]').value = 'ALLEE_SIMPLE'
+                if (document.URL == '${mainUrlStr}') {
+                    let obj ={
+                        type_traversee: ${params.selectedDates.length == 2} == true ? 'ALLEE_RETOUR' : 'ALLEE_SIMPLE',
+                        back: 0,
+                        allee : '${params.dest1}',
+                        date_allee: '${params.selectedDates[0]}',
+                        passagers: '${params.passengers}',
+                        vehicules: '${params.vehicles}',
+                        nb_voitures: '${params.obj_ve_pass.nb_voitures}',
+                        nb_fourgons: '${params.obj_ve_pass.nb_fourgons}',
+                        nb_remorques: '${params.obj_ve_pass.nb_remorques}',
+                        nb_motos: '${params.obj_ve_pass.nb_motos}',
+                        'vehicule_type[114][hauteur0]': 2,
+                        'vehicule_type[114][largeur0]': 5,
+                        'code[114]': 1,
+                        nb_adultes: '${params.obj_ve_pass.nb_adultes}',
+                        nb_enfants: '${params.obj_ve_pass.nb_enfants}',
+                        nb_bebes: '${params.obj_ve_pass.nb_bebes}',
+                        nb_chats: '${params.obj_ve_pass.nb_chats}',
+                        nb_chiens: '${params.obj_ve_pass.nb_chiens}',
+                    }
+
+                    if (${params.selectedDates.length == 2} == true) {
+                        obj.date_retour = '${params.selectedDates[1]}';
+                        obj.port_retour = '${params.dest2}';
+                    }
+
+                    let tmpStr = ''
+
+                    Object.keys(obj).forEach((it)=>{
+                        tmpStr +='<input name="'+ it +'" value="'+ obj[it] +'" />'
+                    })
+                    document.querySelector('#recherche_moteur').innerHTML=tmpStr+'<button class="btn btn-traverser  btnheight" type="submit" id="valide">RECHERCHER</button>'   
                 }
-
-                document.querySelector('select[name=port_retour]').innerHTML = '<option value="${params.dest2}"></option>'
-                document.querySelector('input[name=date_allee]').value = '${params.selectedDates[0]}'
-
-                document.querySelector('input[name=passagers]').value = '${params.passengers}'
-                document.querySelector('input[name=vehicules]').value = '${params.vehicles}'
-                
-                ${str}
-                
-                let ele = document.createElement('div')
-
-                ele.innerHTML = '<input type="text" placeholder="Hauteur" name="vehicule_type[114][hauteur0]" value="2"> <input type="text" placeholder="Longeur" name="vehicule_type[114][largeur0]" value="5"><input type="hidden" name="code[114]" value="1">'
-
-                document.querySelector('#recherche_moteur').appendChild(ele)
 
                 document.querySelector('.btn.btn-traverser.btnheight').click()
 
@@ -121,7 +164,7 @@ export default function NormalWebViewScreen() {
             Array.from(document.querySelectorAll('a[role=button]')).filter((it)=>{
                 return it.className.includes('voyages')
             }).forEach((it)=>it.click())
-            
+
             let results = document.querySelectorAll('.panel-body.resultat');
             if(results.length>0){
                 let data = Array.from(results).map((item) => {
@@ -141,16 +184,16 @@ export default function NormalWebViewScreen() {
                             title: ${Platform.OS == 'ios'} == true ? tmpIt.querySelectorAll('td')[0].innerHTML : tmpIt.querySelectorAll('td')[0].innerText, swr: tmpIt.querySelectorAll('td')[1].children.length, wc: tmpIt.querySelectorAll('td')[2].children.length, avai: tmpIt.querySelectorAll('td')[3].innerText, max: tmpIt.querySelectorAll('td')[4].children[0].children.length - 1, price: ${Platform.OS == 'ios'} == true ? tmpIt.querySelectorAll('td')[5].innerHTML :tmpIt.querySelectorAll('td')[5].innerText
                         }
                     })
-    
+
                     return obj
                 })
-    
+
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type: 'results',
                     data
                 }))
             }else if(document.querySelectorAll('.alert-link').length >0){
-                        
+
                 window.ReactNativeWebView.postMessage(JSON.stringify({
                     type:'error',
                     data:[]
@@ -165,9 +208,9 @@ export default function NormalWebViewScreen() {
                 document.querySelector('header').remove();
             }
 
-            if(document.querySelector('.container-1-ZOL')){
-                document.querySelector('.container-1-ZOL').remove();
-            }
+            // if(document.querySelector('.container-1-ZOL')){
+            //     document.querySelector('.container-1-ZOL').remove();
+            // }
 
             if(document.querySelector('footer') != null){
                 document.querySelector('footer').nextElementSibling.remove()
@@ -175,15 +218,15 @@ export default function NormalWebViewScreen() {
                 document.querySelector('footer').remove()
             }
 
-            if(document.querySelector('#detailsRes') != null){
-                document.querySelector('#detailsRes').remove();
-            }
+            // if(document.querySelector('#detailsRes') != null){
+            //     document.querySelector('#detailsRes').remove();
+            // }
 
             Array.from(document.querySelectorAll('a[role=button]')).filter((it)=>{
                 return it.className.includes('voyages')
             }).forEach((it)=>it.click())
 
-            
+
             let tmp_results = document.querySelectorAll('.panel-body.resultat');
             tmp_results.forEach((itemo,index)=>{
                 let tmpLsto = itemo.nextElementSibling.children[0].querySelector('table>tbody').querySelectorAll('tr')
@@ -211,6 +254,8 @@ export default function NormalWebViewScreen() {
 
             `
         }
+
+
         // else if (step == 2) {
         //     console.log('----- The two condition is invoked ----')
         //     tmpInjected = `
@@ -269,9 +314,9 @@ export default function NormalWebViewScreen() {
     const [isEmpty, setIsEmpty] = useState(false);
 
     useEffect(() => {
-        console.log('------------------------------------')
+        console.log('-----------------Params-------------------')
         console.log(params)
-        console.log('------------------------------------')
+        console.log('-----------------Params-------------------')
     }, [params])
 
 
@@ -311,100 +356,75 @@ export default function NormalWebViewScreen() {
                     navigation.goBack()
                 }
             }} />
+
             <View style={styles.wv}>
-                {injectedJs.length > 0 && <WebView ref={webViewRef} style={{ fontFamily: 'Gilroy-Bold' }} injectedJavaScript={`
-                window.alert = function() {};
+                {showWeb && <WebView ref={webViewRef} style={{ fontFamily: 'Gilroy-Bold' }} cacheEnabled={true} domStorageEnabled={true} sharedCookiesEnabled={true} injectedJavaScript={`
+                    if(document.querySelector('.text-bouton-recherche') != null){
+                        document.querySelector('.text-bouton-recherche').hidden = true
+                    }
+                    
+                    if(document.querySelector('#recevoirDevis') != null){
+                        document.querySelector('#recevoirDevis').style.opacity = 0
+                    }
 
-                if (document.querySelector('#telephone') != null) {
-                    document.querySelector('#telephone').value = "0621325465"
-    
-                    document.querySelectorAll('input').forEach((it)=>{
-                        if(it.id.includes('nom')){
-                            it.value = "nOM"
+                    if (document.querySelector('#steps') != null) {
+                        document.querySelector('#steps').hidden = true
+                    }
+                `+injectedJs} source={{ uri: 'https://www.euromed-voyages.com/' }} onMessage={(resp) => {
+                    // console.log('-------------------------------')
+                    // console.log(resp.nativeEvent.data)
+                    // console.log('-------------------------------')
+
+                    let response = JSON.parse(resp.nativeEvent.data);
+
+                    // console.log('------------------------------------')
+                    // console.log(response)
+                    // console.log('------------------------------------')
+
+                    if (response.type == 'increaseStep' && step < 2) {
+                        setStep(step + 1)
+
+                        // if (step > 1) {
+                        //     setShowWeb(false)
+                        //     setTimeout(() => {
+                        //         setShowWeb(true)
+                        //     }, 1000);
+                        // }
+                    } else if (response.type == 'results') {
+                        setResults(response.data)
+                        // if (step < 2) {
+                        //     setStep(step + 1)
+                        //     setShowWeb(false)
+                        //     setTimeout(() => {
+                        //         setShowWeb(true)
+                        //     }, 1000);
+                        // }
+                    } else if (response.type == 'confirmation') {
+                        setLoading(false);
+                        setTitleHd('Confirmation & paiement')
+                    } else if (response.type == 'error') {
+                        setIsEmpty(true)
+                    } else if (response.type == 'backToSchool') {
+                        navigation.goBack();
+                    }
+
+                }} onLoadStart={() => {
+                    if (step == 2) {
+                        setLoading(true)
+                    }
+                }} onLoadEnd={() => {
+                    if (step == 2) {
+                        if (Platform.OS == 'android') {
+                            setTimeout(() => {
+                                setRemoveContent(true);
+                            }, 8000);
+                        } else {
+                            setTimeout(() => {
+                                setRemoveContent(true);
+                            }, 1000)
                         }
-                    })
-                }
-
-                if(document.querySelector('#myModal') != null){
-                    document.querySelector('#myModal').remove()
-                }
-
-                // if (document.querySelector('#recevoirDevis') != null) {
-                //     document.querySelector('#recevoirDevis').remove()
-                // }
-
-                if(document.querySelectorAll('iframe').length > 0){
-                    document.querySelectorAll('iframe').forEach((it)=>{
-                        it.remove()
-                    })
-                }
-                
-                // (function() {
-                //     var _old_alert = window.alert;
-                //     window.alert = function() {
-                //         _old_alert.apply(window,arguments);
-                //         window.ReactNativeWebView.postMessage(JSON.stringify({
-                //             type: 'backToSchool',
-                //         }))
-                //     };
-                // })();
-
-                if(document.querySelector('#steps') != null){
-                    document.querySelector('#steps').remove()
-                }
-            
-                if(document.querySelector('.text-bouton-recherche') != null){
-                    document.querySelector('.text-bouton-recherche').remove()
-                }
-
-                if(document.querySelector('.backToBoutiqueButton') != null){
-                    document.querySelector('.backToBoutiqueButton').addEventListener('click',()=>{
-                        window.ReactNativeWebView.postMessage(JSON.stringify({
-                            type: 'backToSchool',
-                        }))
-                    })
-                }
-            `+ injectedJs} source={{ uri: 'https://www.euromed-voyages.com/' }} onMessage={(resp) => {
-                        // console.log('-------------------------------')
-                        // console.log(resp.nativeEvent.data)
-                        // console.log('-------------------------------')
-
-                        let response = JSON.parse(resp.nativeEvent.data);
-
-                        console.log('------------------------------------')
-                        console.log(response)
-                        console.log('------------------------------------')
-
-                        if (response.type == 'increaseStep') {
-                            setStep(step + 1)
-                        } else if (response.type == 'results') {
-                            setResults(response.data)
-                        } else if (response.type == 'confirmation') {
-                            setLoading(false);
-                            setTitleHd('Confirmation & paiement')
-                        } else if (response.type == 'error') {
-                            setIsEmpty(true)
-                        } else if (response.type == 'backToSchool') {
-                            navigation.goBack();
-                        }
-
-                    }} onLoadStart={() => {
-                        if (step == 2) {
-                            setLoading(true)
-                        }
-                    }} onLoadEnd={() => {
-                        if (step == 2) {
-                            if (Platform.OS == 'android') {
-                                setTimeout(() => {
-                                    setRemoveContent(true);
-                                }, 8000);
-                            } else {
-                                setTimeout(() => {
-                                    setRemoveContent(true);
-                                }, 1000)
-                            }
-                        }
-                    }} />}
+                    }
+                }} />}
             </View>
             {
                 !removeContent && <>
@@ -489,12 +509,12 @@ export default function NormalWebViewScreen() {
                                             let tmpTot = [...Total]
 
                                             let operator = valType == 'minus' ? -1 : 1
-                                            console.log(operator)
+                                            // console.log(operator)
 
                                             tmpTot[selectedResult] = (operator * (parseFloat(tmpPrce.split(' ')[0]) * value))
                                             tmpTot[selectedResult] = tmpTot[selectedResult] < 0 ? tmpTot[selectedResult] * -1 : tmpTot[selectedResult]
 
-                                            console.log((operator * (parseFloat(tmpPrce.split(' ')[0]) * value)))
+                                            // console.log((operator * (parseFloat(tmpPrce.split(' ')[0]) * value)))
                                             setTotal(tmpTot)
                                         }
                                     } else {
@@ -556,10 +576,10 @@ export default function NormalWebViewScreen() {
                         }
 
 
-                        console.log("------------------------ params.nbPassengers -------------------------------")
+                        // console.log("------------------------ params.nbPassengers -------------------------------")
                         // console.log(totPassTmp[0] == params.nbPassengers, totPassTmp[1] == params.nbPassengers)
-                        console.log(tmRmCtnt)
-                        console.log("------------------------ params.nbPassengers -------------------------------")
+                        // console.log(tmRmCtnt)
+                        // console.log("------------------------ params.nbPassengers -------------------------------")
 
                         let isValid = false;
 
@@ -571,9 +591,9 @@ export default function NormalWebViewScreen() {
                             })
                         })
 
-                        console.log("------------------------------------- Sums -------------------------------------")
-                        console.log(sums)
-                        console.log("------------------------------------- Sums -------------------------------------")
+                        // console.log("------------------------------------- Sums -------------------------------------")
+                        // console.log(sums)
+                        // console.log("------------------------------------- Sums -------------------------------------")
 
                         if (sums[0] == params.nbPassengers && sums[1] == params.nbPassengers) {
                             // setEndPoint('/resultats')

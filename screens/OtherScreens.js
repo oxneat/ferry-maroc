@@ -54,11 +54,15 @@ export default function OtherScreens({ endPoint }) {
                 // ele.crossOrigin = "anonymous"
                 // document.body.appendChild(ele)
 
-                // if(document.querySelectorAll('iframe').length > 0){
-                document.querySelectorAll('iframe').forEach((it)=>{
-                    it.remove()
-                })
-                // }
+                if (document.querySelectorAll('ins').length > 0) {
+                    document.querySelectorAll('ins').forEach((it)=>it.remove())
+                }
+
+                if(document.querySelectorAll('iframe').length > 0){
+                    document.querySelectorAll('iframe').forEach((it)=>{
+                        it.remove()
+                    })
+                }
 
                 // document.querySelectorAll('iframe').forEach((it,ind)=>{
                 //     if(it.id == 'launcher'){
