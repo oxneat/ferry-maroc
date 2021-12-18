@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native'
+import { StyleSheet, Dimensions, View, TouchableOpacity, ActivityIndicator, Platform } from 'react-native'
 
 import { WebView } from 'react-native-webview';
 
-import { mainEndPoint } from '../api/EndPoint'
+// import { mainEndPoint } from '../api/EndPoint'
+
+let { width } = Dimensions.get('window');
 
 import Constants from 'expo-constants';
 
@@ -12,6 +14,7 @@ import { TabStateContext } from '../context/TabManager';
 import { AntDesign } from '@expo/vector-icons';
 
 import Colors from '../helpers/Colors';
+import { isBig } from '../helpers/Dimension';
 
 export default function OtherScreens({ endPoint }) {
     // let endPoi
@@ -43,7 +46,7 @@ export default function OtherScreens({ endPoint }) {
                     <AntDesign name="arrowright" size={24} color="black" />
                 </TouchableOpacity>
             </View>
-            <WebView ref={webviewRef} onMessage={(msg) => {
+            <WebView ref={webviewRef} pagingEnabled={true} thirdPartyCookiesEnabled={true} onMessage={(msg) => {
                 console.log(msg)
             }} style={{ fontFamily: 'Gilroy-Bold' }} source={{
                 uri: `https://www.euromed-voyages.com/${endPoint}`
@@ -89,6 +92,30 @@ export default function OtherScreens({ endPoint }) {
                 //         }
                 //     })
                 // }
+
+                let tmp_links = document.querySelectorAll('a[target="_blank"]')
+                
+                if (tmp_links.length > 0) {
+                    tmp_links.forEach((it)=>{
+                        it.target = "_self"
+
+                        if (it.innerText == "Adresse Port") {
+                            it.parentElement.remove()
+                        }
+                    })
+                }
+
+                let tmp_linkso = document.querySelectorAll('a')
+                
+                if (tmp_linkso.length > 0) {
+                    tmp_linkso.forEach((it)=>{
+                        if((it.href == "https://www.euromed-voyages.com/page/CGV")){
+                            it.href = "#"
+                            it.style.border = "none"
+                            it.style.color = "black"
+                        }
+                    })
+                }
 
                 if(document.querySelector('.top-area-reponsive') != null){
                     document.querySelector('.top-area-reponsive').remove()
@@ -150,6 +177,23 @@ export default function OtherScreens({ endPoint }) {
                 }
 
                 document.body.style.background = 'white'
+
+                let trAttr = document.querySelectorAll('table>tbody>tr')
+
+                if (trAttr.length > 0) {
+                    trAttr.forEach((it,index)=>{
+                        it.style.display='block'
+                        if (${!isBig} == true) {
+                            it.style.width='${width - 35}px'
+                        }
+                        it.children[0].style.display = 'block'
+
+                        if (index == trAttr.length-1) {
+                            it.previousElementSibling.remove()
+                            it.remove()
+                        }
+                    })
+                }
 
                 window.ReactNativeWebView.postMessage('fsdf');
             `} onLoadEnd={() => {

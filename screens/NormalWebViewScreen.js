@@ -370,6 +370,20 @@ export default function NormalWebViewScreen() {
                     if (document.querySelector('#steps') != null) {
                         document.querySelector('#steps').hidden = true
                     }
+
+                    // if(document.querySelector('.backToBoutiqueButton') != null){
+                    //     document.querySelector('.backToBoutiqueButton').addEventListener('click',(e)=>{
+                    //         e.preventDefault();
+                    //         window.ReactNativeWebView.postMessage(JSON.stringify({
+                    //             type: 'backToSchool',
+                    //         }))
+                    //     })
+                    // }
+
+                    if(document.querySelector('.order-payment-list') != null){
+                        document.querySelector('.order-payment-list').previousElementSibling.previousElementSibling.remove()
+                        document.querySelector('.order-payment-list').remove()
+                    }
                 `+injectedJs} source={{ uri: 'https://www.euromed-voyages.com/' }} onMessage={(resp) => {
                     // console.log('-------------------------------')
                     // console.log(resp.nativeEvent.data)
