@@ -240,12 +240,12 @@ export default function ReservationScreen() {
                             <MaterialCommunityIcons style={{ transform: [{ rotateY: '180deg' }] }} name="sail-boat" size={25} color="#c7c7c7" />
                         </View>
                         <View style={{ ...styles.rw, justifyContent: 'space-between', flex: 1 }} >
-                            <Text style={{ fontFamily: selectedDest[0] != -1 && selectedDest[1] != -1 ? "Gilroy-Bold" : 'Gilroy-Thin', color: selectedDest[0] != -1 && selectedDest[1] != -1 ? 'black' : 'gray', textTransform: 'capitalize', fontSize: selectedDest[0] != -1 && selectedDest[1] != -1 ? 18 : 20 }} >
+                            <Text style={{ fontFamily: selectedDest[0] != -1 && selectedDest[1] != -1 ? "Gilroy-Bold" : 'Gilroy-Thin', color: selectedDest[0] != -1 && selectedDest[1] != -1 ? 'black' : 'gray', textTransform: 'capitalize', fontSize: selectedDest[0] != -1 && selectedDest[1] != -1 ? 13 : 20 }} >
                                 {selectedDest[0] != -1 && selectedDest[1] != -1 ? destinations[selectedDest[0]].data[selectedDest[1]][1] : "Sélectionnez"}
                             </Text>
-                            <Text style={{ fontFamily: 'Gilroy-Bold', textTransform: 'capitalize', fontSize: 13 }} >
+                            {!(selectedDest[0] != -1 && selectedDest[1] != -1) && <Text style={{ fontFamily: 'Gilroy-Bold', textTransform: 'capitalize', fontSize: 13 }} >
                                 Aller
-                            </Text>
+                            </Text>}
                         </View>
                     </TouchableOpacity>
                     {selectedBtn == 0 && <View style={{ ...styles.rw, padding: 10, borderTopWidth: 1, borderTopColor: '#c7c7c7' }} >
@@ -253,12 +253,12 @@ export default function ReservationScreen() {
                             <MaterialCommunityIcons name="sail-boat" size={25} color="#c7c7c7" />
                         </View>
                         <View style={{ ...styles.rw, justifyContent: 'space-between', flex: 1 }} >
-                            <Text style={{ fontFamily: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 'Gilroy-Bold' : 'Gilroy-Thin', color: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 'black' : 'gray', textTransform: 'capitalize', fontSize: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 18 : 20 }} >
+                            <Text style={{ fontFamily: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 'Gilroy-Bold' : 'Gilroy-Thin', color: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 'black' : 'gray', textTransform: 'capitalize', fontSize: selectedDest1[0] != -1 && selectedDest1[1] != -1 ? 13 : 20 }} >
                                 {selectedDest1[0] != -1 && selectedDest1[1] != -1 ? destinations[selectedDest1[0]].data[selectedDest1[1]][1] : "Sélectionnez"}
                             </Text>
-                            <Text style={{ fontFamily: 'Gilroy-Bold', textTransform: 'capitalize', fontSize: 13 }} >
+                            {!(selectedDest[0] != -1 && selectedDest[1] != -1) && <Text style={{ fontFamily: 'Gilroy-Bold', textTransform: 'capitalize', fontSize: 13 }} >
                                 Retour
-                            </Text>
+                            </Text>}
                         </View>
                     </View>}
                 </View>
@@ -645,9 +645,9 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: Colors.main,
         position: 'absolute',
-        bottom:isSmall ? 65 : 70,
+        bottom: isSmall ? 65 : 70,
         width: 50,
-        height:isSmall ? 42 : 50,
+        height: isSmall ? 42 : 50,
         borderRadius: 50 / 2,
         alignItems: 'center',
         justifyContent: 'center',

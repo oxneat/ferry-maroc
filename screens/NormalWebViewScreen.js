@@ -73,6 +73,8 @@ export default function NormalWebViewScreen() {
 
     const [showWeb, setShowWeb] = useState(true);
 
+    const [shwOverfld, setShwOverfld] = useState(false);
+
     // document.querySelector('select[name=allee]').value = '${params.dest1}'
     //             if (${params.selectedDates.length == 2} == true) {
     //                 document.querySelector('select[name=port_retour]').value = '${params.dest2}'
@@ -357,6 +359,10 @@ export default function NormalWebViewScreen() {
                 }
             }} />
 
+            {shwOverfld && <View style={styles.overFldWrpr} >
+                <ActivityIndicator color='black' size={30} />
+            </View>}
+
             <View style={styles.wv}>
                 {showWeb && <WebView ref={webViewRef} style={{ fontFamily: 'Gilroy-Bold' }} cacheEnabled={true} domStorageEnabled={true} sharedCookiesEnabled={true} injectedJavaScript={`
                     if(document.querySelector('.text-bouton-recherche') != null){
@@ -384,61 +390,74 @@ export default function NormalWebViewScreen() {
                         document.querySelector('.order-payment-list').previousElementSibling.previousElementSibling.remove()
                         document.querySelector('.order-payment-list').remove()
                     }
-                `+injectedJs} source={{ uri: 'https://www.euromed-voyages.com/' }} onMessage={(resp) => {
-                    // console.log('-------------------------------')
-                    // console.log(resp.nativeEvent.data)
-                    // console.log('-------------------------------')
 
-                    let response = JSON.parse(resp.nativeEvent.data);
-
-                    // console.log('------------------------------------')
-                    // console.log(response)
-                    // console.log('------------------------------------')
-
-                    if (response.type == 'increaseStep' && step < 2) {
-                        setStep(step + 1)
-
-                        // if (step > 1) {
-                        //     setShowWeb(false)
-                        //     setTimeout(() => {
-                        //         setShowWeb(true)
-                        //     }, 1000);
-                        // }
-                    } else if (response.type == 'results') {
-                        setResults(response.data)
-                        // if (step < 2) {
-                        //     setStep(step + 1)
-                        //     setShowWeb(false)
-                        //     setTimeout(() => {
-                        //         setShowWeb(true)
-                        //     }, 1000);
-                        // }
-                    } else if (response.type == 'confirmation') {
-                        setLoading(false);
-                        setTitleHd('Confirmation & paiement')
-                    } else if (response.type == 'error') {
-                        setIsEmpty(true)
-                    } else if (response.type == 'backToSchool') {
-                        navigation.goBack();
+                    if (document.querySelector('#detailsRes') != null) {
+                        document.querySelector('#detailsRes').style.height = '0px'
+                        document.querySelector('#detailsRes').style.opacity = 0
                     }
+                `+ injectedJs} source={{ uri: 'https://www.euromed-voyages.com/' }} onMessage={(resp) => {
+                        // console.log('-------------------------------')
+                        // console.log(resp.nativeEvent.data)
+                        // console.log('-------------------------------')
 
-                }} onLoadStart={() => {
-                    if (step == 2) {
-                        setLoading(true)
-                    }
-                }} onLoadEnd={() => {
-                    if (step == 2) {
-                        if (Platform.OS == 'android') {
-                            setTimeout(() => {
-                                setRemoveContent(true);
-                            }, 8000);
-                        } else {
-                            setTimeout(() => {
-                                setRemoveContent(true);
-                            }, 1000)
+                        let response = JSON.parse(resp.nativeEvent.data);
+
+                        // console.log('------------------------------------')
+                        // console.log(response)
+                        // console.log('------------------------------------')
+
+                        if (response.type == 'increaseStep' && step < 2) {
+                            setStep(step + 1)
+
+                            // if (step > 1) {
+                            //     setShowWeb(false)
+                            //     setTimeout(() => {
+                            //         setShowWeb(true)
+                            //     }, 1000);
+                            // }
+                        } else if (response.type == 'results') {
+                            setResults(response.data)
+                            // if (step < 2) {
+                            //     setStep(step + 1)
+                            //     setShowWeb(false)
+                            //     setTimeout(() => {
+                            //         setShowWeb(true)
+                            //     }, 1000);
+                            // }
+                        } else if (response.type == 'confirmation') {
+                            setLoading(false);
+                            setTitleHd('Confirmation & paiement')
+                        } else if (response.type == 'error') {
+                            setIsEmpty(true)
+                        } else if (response.type == 'backToSchool') {
+                            navigation.goBack();
                         }
-                    }
-                }} />}
+
+                    }} onLoadStart={() => {
+                        if (step == 2) {
+                            setLoading(true)
+                        }
+
+                        if (step >= 2 && removeContent) {
+                            setShwOverfld(true)
+                        }
+                    }} onLoadEnd={() => {
+                        if (step == 2) {
+                            if (Platform.OS == 'android') {
+                                setTimeout(() => {
+                                    setRemoveContent(true);
+                                }, 8000);
+                            } else {
+                                setTimeout(() => {
+                                    setRemoveContent(true);
+                                }, 1000)
+                            }
+                        }
+
+                        if (step >= 2 && removeContent && shwOverfld) {
+                            setShwOverfld(false)
+                        }
+                    }} />}
             </View>
             {
                 !removeContent && <>
@@ -568,11 +587,23 @@ export default function NormalWebViewScreen() {
                         // })
 
 
-                        let totPassTmp = [0, 1];
+                        let totPassTmp = [0];
 
-                        let tmRmCtnt = [[...selectedOptionsRoom[0]], [...selectedOptionsRoom[1]]]
 
-                        for (let j = 0; j < 2; j++) {
+
+                        let tmRmCtnt = [[...selectedOptionsRoom[0]]]
+
+                        let tmpJ = 1
+
+
+                        if (params.selectedDates.length == 2) {
+                            totPassTmp.push(1)
+                            tmRmCtnt.push([...selectedOptionsRoom[1]])
+                            tmpJ = 2
+                        }
+
+
+                        for (let j = 0; j < tmpJ; j++) {
 
                             for (let i = 0; i < selectedOptionsRoom[j].length; i++) {
                                 if (i > 0) {
@@ -609,7 +640,7 @@ export default function NormalWebViewScreen() {
                         // console.log(sums)
                         // console.log("------------------------------------- Sums -------------------------------------")
 
-                        if (sums[0] == params.nbPassengers && sums[1] == params.nbPassengers) {
+                        if (sums[0] == params.nbPassengers && sums[1] == params.nbPassengers || sums[0] == params.nbPassengers && params.selectedDates.length == 1) {
                             // setEndPoint('/resultats')
                             // setShowWebView(false)
                             // setTimeout(() => {
@@ -732,5 +763,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10
+    },
+    overFldWrpr: {
+        backgroundColor: 'white',
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        position: 'absolute',
+        zIndex: 100,
+        marginTop: Constants.statusBarHeight,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })

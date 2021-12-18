@@ -17,14 +17,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.digi.euromed"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.oxneat.euromed"
+      "package": "com.digi.euromed",
+      "permissions": [
+        "CAMERA",
+        "READ_CONTACTS",
+        "RECORD_AUDIO",
+        "READ_PHONE_STATE"
+      ],
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

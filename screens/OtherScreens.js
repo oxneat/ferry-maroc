@@ -7,6 +7,8 @@ import { WebView } from 'react-native-webview';
 
 let { width } = Dimensions.get('window');
 
+import { useNavigation } from '@react-navigation/native';
+
 import Constants from 'expo-constants';
 
 import { TabStateContext } from '../context/TabManager';
@@ -16,6 +18,12 @@ import { AntDesign } from '@expo/vector-icons';
 import Colors from '../helpers/Colors';
 import { isBig } from '../helpers/Dimension';
 
+import * as Linking from 'expo-linking';
+
+let compareToUrl = (url) => {
+    return (url == "https://www.diplomatie.gouv.fr/fr/conseils-aux-voyageurs" || url == "http://www.diplomatie.be/fr/travel/traveldocs.asp" || url == "https://www.eda.admin.ch/eda/fr/home.html" || url == "https://consulat-paris-algerie.fr/" || url == "https://www.consulatmaroclyon.com/" || url == "http://cgt-paris.diplomatie.gov.tn/#&panel1-2") && Platform.OS == "ios"
+}
+
 export default function OtherScreens({ endPoint }) {
     // let endPoi
     const { setShowBottomTab } = useContext(TabStateContext)
@@ -24,9 +32,34 @@ export default function OtherScreens({ endPoint }) {
         setShowBottomTab(true)
     }, [])
 
+    let navigation = useNavigation();
+
     let webviewRef = useRef()
 
     const [shwOverfld, setShwOverfld] = useState(true);
+
+    const [tmpEndPoint, setTmpEndPoint] = useState(endPoint);
+
+    const [currentDiploUrl, setCurrentDiploUrl] = useState('');
+
+    const [showWeb, setShowWeb] = useState(true);
+
+    useEffect(() => {
+        // const unsubscribe = navigation.addListener('focus', () => {
+            if (compareToUrl(currentDiploUrl)) {
+                setTmpEndPoint('page/formalites-de-voyage');
+
+                setShowWeb(false)
+
+                setTimeout(() => {
+                    setShowWeb(true)
+                }, 1000);
+            }
+        // });
+
+        // Return the function to unsubscribe from the event so it gets removed on unmount
+        // return unsubscribe;
+    }, [currentDiploUrl]);
 
     return (
         <View style={styles.container}>
@@ -46,10 +79,32 @@ export default function OtherScreens({ endPoint }) {
                     <AntDesign name="arrowright" size={24} color="black" />
                 </TouchableOpacity>
             </View>
-            <WebView ref={webviewRef} pagingEnabled={true} thirdPartyCookiesEnabled={true} onMessage={(msg) => {
-                console.log(msg)
+            {showWeb && <WebView ref={webviewRef} onNavigationStateChange={(event) => {
+                // if (event.url !== 'https://www.euromed-voyages.com/page/formalites-de-voyage') {
+                //     this.webview.stopLoading();
+                //     Linking.openURL(event.url);
+                // }
+
+                if (compareToUrl(event.url)) {
+                    // webviewRef.current.stopLoading()
+                    Linking.openURL(event.url).then(()=>{
+                        setCurrentDiploUrl(event.url)
+                    }).catch((err)=>{
+                        // console.log(err)
+                        setCurrentDiploUrl(event.url)
+                    })
+                }
+
+                // console.log('----------------------- event.url -----------------------------')
+                // console.log(event.url)
+                // console.log('------------------------ event.url ----------------------------')
+
+            }} thirdPartyCookiesEnabled={true} onMessage={(msg) => {
+                console.log('--------------MSG-------------------')
+                console.log(msg.nativeEvent.data)
+                console.log('--------------MSG-------------------')
             }} style={{ fontFamily: 'Gilroy-Bold' }} source={{
-                uri: `https://www.euromed-voyages.com/${endPoint}`
+                uri: `https://www.euromed-voyages.com/${tmpEndPoint}`
             }} injectedJavaScript={`
                 // let ele = document.createElement('script')
                 // ele.src = "https://code.jquery.com/jquery-3.6.0.min.js"
@@ -195,7 +250,25 @@ export default function OtherScreens({ endPoint }) {
                     })
                 }
 
-                window.ReactNativeWebView.postMessage('fsdf');
+
+                if (document.URL == "https://www.euromed-voyages.com/page/formalites-de-voyage") {
+                    let tmp_linksa = document.querySelectorAll('a')
+                
+                    if (tmp_linksa.length > 0) {
+                        tmp_linksa.forEach((it)=>{
+                            it.target = "_blank"
+
+                            if (it.innerText == "Adresse Port") {
+                                it.parentElement.remove()
+                            }
+                        })
+                    }
+                }
+
+                // JSON.stringify({
+                //     url: document.URL
+                // })
+                window.ReactNativeWebView.postMessage('sqdfsf');
             `} onLoadEnd={() => {
                     if (Platform.OS == 'ios') {
                         setShwOverfld(false)
@@ -206,7 +279,7 @@ export default function OtherScreens({ endPoint }) {
                     }
                 }} onLoadStart={() => {
                     setShwOverfld(true)
-                }} />
+                }} />}
         </View>
     )
 }
